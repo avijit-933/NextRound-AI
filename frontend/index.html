@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NextRound AI — AI Interview Assistant</title>
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg nr-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="index.html"><span class="brand-mark">N</span>NextRound<span class="text-gradient">AI</span></a>
+    <button class="navbar-toggler border-0 text-white" type="button" data-bs-toggle="collapse" data-bs-target="#navMain">
+      <i class="bi bi-list fs-2 text-body"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navMain">
+      <ul class="navbar-nav mx-auto gap-1 mt-3 mt-lg-0">
+        <li class="nav-item"><a class="nav-link" href="#how-it-works">How it works</a></li>
+        <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
+        <li class="nav-item"><a class="nav-link" href="#features">Features</a></li>
+        <li class="nav-item"><a class="nav-link" href="#technologies">Technology</a></li>
+        <li class="nav-item"><a class="nav-link" href="#testimonials">Testimonials</a></li>
+        <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+      </ul>
+      <div class="d-flex align-items-center gap-2 mt-3 mt-lg-0">
+        <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme"><i class="bi bi-moon-stars"></i></button>
+        <div id="navLoggedOut" class="d-flex align-items-center gap-2">
+          <a href="login.html" class="btn-nr-ghost btn">Log in</a>
+          <a href="register.html" class="btn-nr-primary btn">Register</a>
+        </div>
+        <div id="navLoggedIn" class="dropdown d-none">
+          <button class="btn d-flex align-items-center gap-2 border-0" style="background:var(--surface);border-radius:99px;padding:.35rem .9rem .35rem .35rem;" data-bs-toggle="dropdown">
+            <span class="nr-avatar" style="width:32px;height:32px;font-size:.85rem;" data-user-initial>?</span>
+            <span class="fw-semibold small" data-user-name>—</span>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li><a class="dropdown-item" href="dashboard.html"><i class="bi bi-grid-1x2-fill me-2"></i>Dashboard</a></li>
+            <li><a class="dropdown-item" href="profile.html"><i class="bi bi-person me-2"></i>Edit profile</a></li>
+            <li><hr class="dropdown-divider" style="border-color:var(--border);"></li>
+            <li><a class="dropdown-item" href="#" onclick="doLogout(event)"><i class="bi bi-box-arrow-right me-2"></i>Log out</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="section-pad hero-dark" style="padding-top:8.5rem;">
+  <div class="hero-dark-bg" aria-hidden="true"></div>
+  <div class="container position-relative">
+    <div class="row align-items-center g-5">
+      <div class="col-lg-6 reveal">
+        <span class="pill pill-live mb-3"><span class="pill-dot"></span> Live AI Interview Engine</span>
+        <h1 class="display-4 fw-bold mt-3 mb-2 hero-headline"><span class="text-gradient">Practice</span> today.<br><span class="text-gradient">Perform</span> tomorrow.</h1>
+        <div class="hero-underline mb-3"></div>
+        <p class="text-muted-custom fs-5 mb-4" style="max-width:480px;">
+          NextRound AI conducts realistic mock interviews that listen, analyze
+          and adapt — helping you improve with real-time feedback and smart insights.
+        </p>
+        <div class="d-flex flex-wrap gap-3">
+          <a href="register.html" class="btn-nr-primary btn btn-lg" id="heroCta"><i class="bi bi-rocket-takeoff-fill me-1"></i> Start an Interview <i class="bi bi-arrow-right ms-1"></i></a>
+          <a href="#how-it-works" class="btn-nr-outline btn btn-lg"><i class="bi bi-play-circle-fill me-1"></i> See How It Works</a>
+        </div>
+        <div class="d-flex gap-4 mt-4 pt-2 flex-wrap">
+          <div class="hero-stat">
+            <span class="hero-stat-icon" style="background:rgba(139,92,246,.16);color:#C4B5FD;"><i class="bi bi-people-fill"></i></span>
+            <div><div class="fw-bold fs-5 mono">42K+</div><div class="text-muted-custom small">Interviews completed</div></div>
+          </div>
+          <div class="hero-stat">
+            <span class="hero-stat-icon" style="background:rgba(52,211,153,.16);color:#6EE7B7;"><i class="bi bi-chat-square-text-fill"></i></span>
+            <div><div class="fw-bold fs-5 mono">1M+</div><div class="text-muted-custom small">Questions asked</div></div>
+          </div>
+          <div class="hero-stat">
+            <span class="hero-stat-icon" style="background:rgba(96,165,250,.16);color:#93C5FD;"><i class="bi bi-star-fill"></i></span>
+            <div><div class="fw-bold fs-5 mono">4.8/5</div><div class="text-muted-custom small">Candidate rating</div></div>
+          </div>
+          <div class="hero-stat">
+            <span class="hero-stat-icon" style="background:rgba(251,146,60,.16);color:#FDBA74;"><i class="bi bi-graph-up-arrow"></i></span>
+            <div><div class="fw-bold fs-5 mono">6</div><div class="text-muted-custom small">Interview modes</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6 reveal" style="transition-delay:.1s;">
+        <div class="hero-mock-wrap position-relative">
+          <div class="ai-badge-float d-none d-sm-flex">
+            <span class="ai-badge-icon"><i class="bi bi-cpu-fill"></i></span>
+            <div>
+              <div class="ai-badge-title">AI Interviewer</div>
+              <div class="ai-badge-sub">Adaptive. Intelligent. Real.</div>
+            </div>
+          </div>
+          <div class="glass-card hero-mock-card hero-mock-card-dark p-4 position-relative" style="border-radius:28px;">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <span class="pill pill-live"><span class="pill-dot"></span> Recording</span>
+              <span class="mono text-muted-custom small" id="heroTimer">04:12 / 20:00</span>
+            </div>
+
+            <div class="hero-preview hero-preview-dark mb-3">
+              <div class="hero-metric-col hero-metric-col-left">
+                <div class="hero-metric">
+                  <span class="hero-metric-icon" style="--m-color:#34D399;"><i class="bi bi-eye-fill"></i></span>
+                  <span><span class="hero-metric-lbl">Eye Contact</span><span class="hero-metric-val" id="heroEyeContact" style="color:#34D399;">0%</span></span>
+                </div>
+                <div class="hero-metric">
+                  <span class="hero-metric-icon" style="--m-color:#60A5FA;"><i class="bi bi-soundwave"></i></span>
+                  <span><span class="hero-metric-lbl">Voice Clarity</span><span class="hero-metric-val" id="heroVoiceClarity" style="color:#60A5FA;">0%</span></span>
+                </div>
+              </div>
+              <div class="hero-metric-col hero-metric-col-right">
+                <div class="hero-metric">
+                  <span class="hero-metric-icon" style="--m-color:#A78BFA;"><i class="bi bi-emoji-smile-fill"></i></span>
+                  <span><span class="hero-metric-lbl">Confidence</span><span class="hero-metric-val" id="heroConfidence" style="color:#A78BFA;">0%</span></span>
+                </div>
+                <div class="hero-metric">
+                  <span class="hero-metric-icon" style="--m-color:#FB7185;"><i class="bi bi-heart-fill"></i></span>
+                  <span><span class="hero-metric-lbl">Engagement</span><span class="hero-metric-val" id="heroEngagement" style="color:#FB7185;">0%</span></span>
+                </div>
+              </div>
+            </div>
+
+            <div class="glass-card-strong hero-panel-dark p-3 mb-3">
+              <div class="d-flex justify-content-between align-items-start">
+                <div class="eyebrow mb-1">Current Question</div>
+                <span class="hero-tag">Technical</span>
+              </div>
+              <div class="fw-medium" id="heroQuestion"></div>
+            </div>
+
+            <div class="row g-3 mb-3 align-items-stretch">
+              <div class="col-9">
+                <div class="glass-card-strong hero-panel-dark hero-panel-sunken p-3 h-100">
+                  <div class="eyebrow mb-1"><i class="bi bi-mic-fill me-1"></i> Your Answer · Live</div>
+                  <div class="small mb-2" id="heroAnswer" style="min-height:2.6em;"></div>
+                  <div class="waveform"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+                </div>
+              </div>
+              <div class="col-3 d-flex flex-column align-items-center justify-content-center">
+                <div class="ring ring-lg-sm" id="heroRing" style="--pct:0;--ring-color:var(--success);">
+                  <div class="ring-value"><div class="num" id="heroRingNum">0</div></div>
+                </div>
+                <div class="text-muted-custom text-center mt-2" style="font-size:.62rem;letter-spacing:.05em;">OVERALL SCORE</div>
+              </div>
+            </div>
+
+            <div class="hero-status-row">
+              <div class="hero-status-item"><i class="bi bi-mic"></i><span>Listening</span></div>
+              <div class="hero-status-item"><i class="bi bi-stopwatch"></i><span>Analyzing</span></div>
+              <div class="hero-status-item active"><i class="bi bi-bullseye"></i><span>Evaluating</span></div>
+              <div class="hero-status-item"><i class="bi bi-chat-square-text"></i><span>Feedback</span></div>
+            </div>
+
+            <div class="hero-powered-by"><i class="bi bi-stars me-1"></i>Powered by NextRound AI</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+
+<!-- TRUST STRIP -->
+<div class="trust-strip">
+  <div class="trust-watermark" aria-hidden="true"></div>
+  <div class="container position-relative">
+    <div class="trust-label-row">
+      <span class="trust-rule"></span>
+      <span class="trust-label"><i class="bi bi-gem me-2"></i>Prep for rounds at</span>
+      <span class="trust-rule"></span>
+    </div>
+  </div>
+  <div class="trust-marquee">
+    <div class="trust-track">
+      <span class="trust-chip"><i class="bi bi-google"></i>Google</span>
+      <span class="trust-chip"><i class="bi bi-microsoft"></i>Microsoft</span>
+      <span class="trust-chip"><i class="bi bi-amazon"></i>Amazon</span>
+      <span class="trust-chip"><i class="bi bi-gem"></i>TCS</span>
+      <span class="trust-chip"><i class="bi bi-gem"></i>Infosys</span>
+      <span class="trust-chip"><i class="bi bi-gem"></i>Accenture</span>
+      <span class="trust-chip"><i class="bi bi-gem"></i>Deloitte</span>
+      <!-- duplicated for a seamless marquee loop -->
+      <span class="trust-chip" aria-hidden="true"><i class="bi bi-google"></i>Google</span>
+      <span class="trust-chip" aria-hidden="true"><i class="bi bi-microsoft"></i>Microsoft</span>
+      <span class="trust-chip" aria-hidden="true"><i class="bi bi-amazon"></i>Amazon</span>
+      <span class="trust-chip" aria-hidden="true"><i class="bi bi-gem"></i>TCS</span>
+      <span class="trust-chip" aria-hidden="true"><i class="bi bi-gem"></i>Infosys</span>
+      <span class="trust-chip" aria-hidden="true"><i class="bi bi-gem"></i>Accenture</span>
+      <span class="trust-chip" aria-hidden="true"><i class="bi bi-gem"></i>Deloitte</span>
+    </div>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<section id="how-it-works" class="section-pad">
+  <div class="container">
+    <div class="text-center mb-5 reveal">
+      <div class="eyebrow mb-2">How it works</div>
+      <h2 class="fw-bold">From resume to ready, in three rounds</h2>
+    </div>
+    <div class="row g-4">
+      <div class="col-md-4 reveal hiw-step">
+        <div class="hiw-connector"></div>
+        <div class="hiw-num">01</div>
+        <h3 class="h5 fw-bold mb-2">Upload your resume</h3>
+        <p class="text-muted-custom small mb-0">NextRound AI reads your actual projects, skills and experience — the question set is built from what you've done, not a generic bank.</p>
+      </div>
+      <div class="col-md-4 reveal hiw-step" style="transition-delay:.08s;">
+        <div class="hiw-connector"></div>
+        <div class="hiw-num">02</div>
+        <h3 class="h5 fw-bold mb-2">Take the mock round</h3>
+        <p class="text-muted-custom small mb-0">Answer out loud on camera. Speech, eye contact, head pose and emotion are all read in real time, just like a real panel would notice.</p>
+      </div>
+      <div class="col-md-4 reveal hiw-step" style="transition-delay:.16s;">
+        <div class="hiw-num">03</div>
+        <h3 class="h5 fw-bold mb-2">Get your scorecard</h3>
+        <p class="text-muted-custom small mb-0">A breakdown across technical depth, communication and confidence — plus a downloadable report with specific things to fix before the real thing.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about" class="section-pad">
+  <div class="container">
+    <div class="row g-5 align-items-center">
+      <div class="col-lg-5 reveal">
+        <div class="eyebrow mb-2">About the platform</div>
+        <h2 class="fw-bold mb-3">An interview panel that never gets tired of you.</h2>
+        <p class="text-muted-custom">NextRound AI combines resume-aware question generation, computer vision, speech recognition and
+        emotion analysis into a single mock-interview loop — so you rehearse the real thing, not a generic question bank.</p>
+      </div>
+      <div class="col-lg-7">
+        <div class="row g-3">
+          <div class="col-sm-6 reveal">
+            <div class="glass-card p-4 h-100 hoverable">
+              <i class="bi bi-file-earmark-text fs-3" style="color:var(--primary-2);"></i>
+              <div class="fw-semibold mt-3">Resume-aware questions</div>
+              <div class="text-muted-custom small mt-1">RAG over your actual projects and skills, not a static bank.</div>
+            </div>
+          </div>
+          <div class="col-sm-6 reveal" style="transition-delay:.05s;">
+            <div class="glass-card p-4 h-100 hoverable">
+              <i class="bi bi-camera-video fs-3" style="color:var(--violet);"></i>
+              <div class="fw-semibold mt-3">Body language read-out</div>
+              <div class="text-muted-custom small mt-1">Eye contact, head pose and visibility, tracked live.</div>
+            </div>
+          </div>
+          <div class="col-sm-6 reveal" style="transition-delay:.1s;">
+            <div class="glass-card p-4 h-100 hoverable">
+              <i class="bi bi-mic fs-3" style="color:var(--success);"></i>
+              <div class="fw-semibold mt-3">Speech, transcribed</div>
+              <div class="text-muted-custom small mt-1">Your spoken answer, captured and editable in real time.</div>
+            </div>
+          </div>
+          <div class="col-sm-6 reveal" style="transition-delay:.15s;">
+            <div class="glass-card p-4 h-100 hoverable">
+              <i class="bi bi-graph-up-arrow fs-3" style="color:var(--warning);"></i>
+              <div class="fw-semibold mt-3">A scorecard, not a vibe</div>
+              <div class="text-muted-custom small mt-1">Technical, communication and confidence, broken down.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features" class="section-pad" style="background:var(--bg-alt);">
+  <div class="container">
+    <div class="text-center mb-5 reveal">
+      <div class="eyebrow mb-2">Features</div>
+      <h2 class="fw-bold">Everything one interview round actually needs</h2>
+    </div>
+    <div class="row g-4">
+      <div class="col-md-4 reveal">
+        <div class="glass-card p-4 h-100 hoverable">
+          <div class="ring sm mb-3" style="--pct:68;--ring-color:var(--primary-2);"><div class="ring-value"><div class="num">68</div></div></div>
+          <div class="fw-semibold mb-1">HR, Technical, Coding & Aptitude</div>
+          <div class="text-muted-custom small">Four interview types across beginner to advanced difficulty, matched to your target role.</div>
+        </div>
+      </div>
+      <div class="col-md-4 reveal" style="transition-delay:.05s;">
+        <div class="glass-card p-4 h-100 hoverable">
+          <i class="bi bi-emoji-smile fs-2 mb-3" style="color:var(--violet);"></i>
+          <div class="fw-semibold mb-1">Live emotion analysis</div>
+          <div class="text-muted-custom small">Happy, neutral, sad, angry, fear and surprise, charted through the whole session.</div>
+        </div>
+      </div>
+      <div class="col-md-4 reveal" style="transition-delay:.1s;">
+        <i class="bi bi-file-earmark-pdf fs-2 mb-3" style="color:var(--danger);"></i>
+        <div class="glass-card p-4 h-100 hoverable">
+          <div class="fw-semibold mb-1">Downloadable reports</div>
+          <div class="text-muted-custom small">A PDF with your questions, answers, emotion timeline and recommendations.</div>
+        </div>
+      </div>
+      <div class="col-md-4 reveal">
+        <div class="glass-card p-4 h-100 hoverable">
+          <i class="bi bi-shield-lock fs-2 mb-3" style="color:var(--success);"></i>
+          <div class="fw-semibold mb-1">Secured with JWT</div>
+          <div class="text-muted-custom small">Token-based auth, validated inputs, and encrypted resume storage.</div>
+        </div>
+      </div>
+      <div class="col-md-4 reveal" style="transition-delay:.05s;">
+        <div class="glass-card p-4 h-100 hoverable">
+          <i class="bi bi-clock-history fs-2 mb-3" style="color:var(--warning);"></i>
+          <div class="fw-semibold mb-1">Full interview history</div>
+          <div class="text-muted-custom small">Every attempt logged, scored and comparable over time.</div>
+        </div>
+      </div>
+      <div class="col-md-4 reveal" style="transition-delay:.1s;">
+        <div class="glass-card p-4 h-100 hoverable">
+          <i class="bi bi-moon-stars fs-2 mb-3" style="color:var(--primary-2);"></i>
+          <div class="fw-semibold mb-1">Dark & light, both first-class</div>
+          <div class="text-muted-custom small">Built for long prep sessions, day or night.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TECHNOLOGIES -->
+<section id="technologies" class="section-pad">
+  <div class="container">
+    <div class="text-center mb-5 reveal">
+      <div class="eyebrow mb-2">Under the hood</div>
+      <h2 class="fw-bold">The stack doing the actual work</h2>
+    </div>
+    <div class="row g-3 text-center">
+      <!-- tech chips -->
+      <div class="col-6 col-md-3 reveal">
+        <div class="glass-card p-3 hoverable"><i class="bi bi-lightning-charge fs-4" style="color:var(--primary-2);"></i><div class="small fw-semibold mt-2">FastAPI</div></div>
+      </div>
+      <div class="col-6 col-md-3 reveal">
+        <div class="glass-card p-3 hoverable"><i class="bi bi-database fs-4" style="color:var(--warning);"></i><div class="small fw-semibold mt-2">MySQL</div></div>
+      </div>
+      <div class="col-6 col-md-3 reveal">
+        <div class="glass-card p-3 hoverable"><i class="bi bi-stars fs-4" style="color:var(--violet);"></i><div class="small fw-semibold mt-2">Gemini API</div></div>
+      </div>
+      <div class="col-6 col-md-3 reveal">
+        <div class="glass-card p-3 hoverable"><i class="bi bi-diagram-3 fs-4" style="color:var(--success);"></i><div class="small fw-semibold mt-2">LangChain + FAISS</div></div>
+      </div>
+      <div class="col-6 col-md-3 reveal">
+        <div class="glass-card p-3 hoverable"><i class="bi bi-mic fs-4" style="color:var(--primary-2);"></i><div class="small fw-semibold mt-2">Whisper</div></div>
+      </div>
+      <div class="col-6 col-md-3 reveal">
+        <div class="glass-card p-3 hoverable"><i class="bi bi-camera-video fs-4" style="color:var(--danger);"></i><div class="small fw-semibold mt-2">OpenCV + MediaPipe</div></div>
+      </div>
+      <div class="col-6 col-md-3 reveal">
+        <div class="glass-card p-3 hoverable"><i class="bi bi-emoji-neutral fs-4" style="color:var(--warning);"></i><div class="small fw-semibold mt-2">DeepFace</div></div>
+      </div>
+      <div class="col-6 col-md-3 reveal">
+        <div class="glass-card p-3 hoverable"><i class="bi bi-bar-chart-line fs-4" style="color:var(--success);"></i><div class="small fw-semibold mt-2">Chart.js</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section id="testimonials" class="section-pad" style="background:var(--bg-alt);">
+  <div class="container">
+    <div class="text-center mb-5 reveal">
+      <div class="eyebrow mb-2">Testimonials</div>
+      <h2 class="fw-bold">Candidates who rehearsed here</h2>
+    </div>
+    <div class="row g-4" id="testimonialsRow">
+      <!-- populated dynamically by renderTestimonials() in the script at the bottom of this page -->
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" class="section-pad">
+  <div class="container">
+    <div class="row g-5">
+      <div class="col-lg-5 reveal">
+        <div class="eyebrow mb-2">Contact</div>
+        <h2 class="fw-bold mb-3">Questions before your first round?</h2>
+        <p class="text-muted-custom mb-4">Reach out and the team replies within a business day.</p>
+        <div class="d-flex align-items-center gap-3 mb-3"><i class="bi bi-envelope text-gradient fs-5"></i> avijit2024@gift.edu.in</div>
+        <div class="d-flex align-items-center gap-3 mb-3"><i class="bi bi-telephone text-gradient fs-5"></i> +91 9332664505</div>
+        <div class="d-flex align-items-center gap-3"><i class="bi bi-geo-alt text-gradient fs-5"></i> Bhubaneswar, India</div>
+      </div>
+      <div class="col-lg-7 reveal" style="transition-delay:.05s;">
+        <form class="glass-card p-4 p-md-5" id="contactForm" onsubmit="handleContact(event)">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label-nr">Name</label>
+              <input type="text" class="form-control form-control-nr" id="contactName" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label-nr">Email</label>
+              <input type="email" class="form-control form-control-nr" id="contactEmail" required>
+            </div>
+            <div class="col-12">
+              <label class="form-label-nr">Message</label>
+              <textarea class="form-control form-control-nr" id="contactMessage" rows="4" required></textarea>
+            </div>
+            <div class="col-12">
+              <button class="btn-nr-primary btn w-100" type="submit" id="contactSubmitBtn">Send message</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="py-4" style="border-top:1px solid var(--border);">
+  <div class="container d-flex flex-wrap justify-content-between align-items-center gap-2">
+    <span class="text-muted-custom small">© <span id="year"></span> NextRound AI. All rights reserved.</span>
+    <div class="d-flex gap-3">
+        <a href="www.linkedin.com/in/avijit-patra-723672326" 
+          class="text-muted-custom" 
+          target="_blank" 
+          rel="noopener noreferrer">
+          <i class="bi bi-linkedin"></i>
+       </a>
+
+        <a href="https://github.com/your-github-username" 
+          class="text-muted-custom" 
+          target="_blank" 
+          rel="noopener noreferrer">
+          <i class="bi bi-github"></i>
+        </a>
+       <a href="#" class="text-muted-custom"><i class="bi bi-twitter-x"></i></a>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/api.js"></script>
+<script src="js/main.js"></script>
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+
+/* ---------- hero mock: types out a question + answer, then animates the ring ---------- */
+(function animateHeroMock(){
+  const qEl = document.getElementById('heroQuestion');
+  const aEl = document.getElementById('heroAnswer');
+  const ringEl = document.getElementById('heroRing');
+  const ringNumEl = document.getElementById('heroRingNum');
+  const eyeEl = document.getElementById('heroEyeContact');
+  const confEl = document.getElementById('heroConfidence');
+  const voiceEl = document.getElementById('heroVoiceClarity');
+  const engEl = document.getElementById('heroEngagement');
+  if (!qEl || !aEl) return;
+
+  const question = "Walk me through how you'd design a rate limiter for a public API.";
+  const answer = "I'd start with a token bucket algorithm backed by Redis so it works across multiple instances…";
+
+  function typeInto(el, text, speed, onDone){
+    let i = 0;
+    el.innerHTML = '<span class="type-cursor"></span>';
+    const timer = setInterval(() => {
+      i++;
+      el.textContent = text.slice(0, i);
+      if (i >= text.length) {
+        clearInterval(timer);
+        if (onDone) onDone();
+      } else {
+        el.innerHTML = text.slice(0, i) + '<span class="type-cursor"></span>';
+      }
+    }, speed);
+  }
+
+  function countUp(){
+    let pct = 0;
+    const target = 82, eyeTarget = 91, confTarget = 84, voiceTarget = 89, engTarget = 87;
+    const timer = setInterval(() => {
+      pct += 2;
+      if (pct >= target) pct = target;
+      const t = pct / target;
+      ringEl.style.setProperty('--pct', pct);
+      ringNumEl.textContent = pct;
+      eyeEl.textContent = Math.round(t * eyeTarget) + '%';
+      if (confEl) confEl.textContent = Math.round(t * confTarget) + '%';
+      if (voiceEl) voiceEl.textContent = Math.round(t * voiceTarget) + '%';
+      if (engEl) engEl.textContent = Math.round(t * engTarget) + '%';
+      if (pct >= target) clearInterval(timer);
+    }, 24);
+  }
+
+  // Respect reduced-motion preference: show the end state immediately.
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    qEl.textContent = question;
+    aEl.textContent = answer;
+    ringEl.style.setProperty('--pct', 82);
+    ringNumEl.textContent = 82;
+    eyeEl.textContent = '91%';
+    if (confEl) confEl.textContent = '84%';
+    if (voiceEl) voiceEl.textContent = '89%';
+    if (engEl) engEl.textContent = '87%';
+    return;
+  }
+
+  typeInto(qEl, question, 22, () => {
+    setTimeout(() => typeInto(aEl, answer, 26, countUp), 400);
+  });
+})();
+
+/* ---------- auth-aware nav: show avatar/dashboard instead of login/register ---------- */
+(function paintAuthState(){
+  const user = (typeof Auth !== 'undefined') ? Auth.getUser() : null;
+  const heroCta = document.getElementById('heroCta');
+  if (user) {
+    document.getElementById('navLoggedOut').classList.add('d-none');
+    document.getElementById('navLoggedIn').classList.remove('d-none');
+    heroCta.href = 'interview_setup.html';
+    heroCta.innerHTML = 'Go to your dashboard <i class="bi bi-arrow-right ms-1"></i>';
+    heroCta.onclick = null;
+  } else {
+    heroCta.href = 'register.html';
+  }
+})();
+
+/* ---------- contact form: sends a real email via the backend ---------- */
+async function handleContact(e){
+  e.preventDefault();
+  const btn = document.getElementById('contactSubmitBtn');
+  const originalHtml = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner-ring"></span> Sending...';
+
+  try {
+    await ContactAPI.send({
+      name: document.getElementById('contactName').value.trim(),
+      email: document.getElementById('contactEmail').value.trim(),
+      message: document.getElementById('contactMessage').value.trim(),
+    });
+    showToast("Message sent — we'll get back to you soon.", 'success');
+    document.getElementById('contactForm').reset();
+  } catch (err) {
+    showToast(err.message, 'danger');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = originalHtml;
+  }
+}
+
+/* ---------- testimonials: real recently-registered candidates ---------- */
+// Falls back to these two if the API call fails or fewer than 3 people
+// have registered yet, so the section never looks sparse or broken.
+const FALLBACK_TESTIMONIALS = [
+  { full_name: 'Riya Sharma', quote: "The eye-contact feedback alone fixed a habit I didn't know I had. Felt like a real technical round." },
+  { full_name: 'Arjun Mehta', quote: "Questions were actually pulled from my resume projects — not generic 'tell me about yourself' filler." },
+  { full_name: 'Priya Nair', quote: "The report I downloaded after was more useful than three rounds of feedback from my mentor." },
+];
+
+function testimonialCardHtml(person, isReal, delay){
+  const initial = (person.full_name || '?').trim().charAt(0).toUpperCase();
+  const quote = person.quote || 'Just joined and started interview prep with NextRound AI.';
+  const badge = isReal
+    ? '<span class="pill pill-live" style="font-size:.65rem;padding:.15rem .55rem;"><span class="pill-dot"></span> Recently joined</span>'
+    : '';
+  return `
+    <div class="col-md-4 reveal is-visible" style="transition-delay:${delay}s;">
+      <div class="glass-card p-4 h-100">
+        <div class="d-flex justify-content-between align-items-start mb-3">
+          <div>★★★★★</div>
+          ${badge}
+        </div>
+        <p class="text-muted-custom">"${quote}"</p>
+        <div class="d-flex align-items-center gap-2 mt-3">
+          <div class="rounded-circle d-flex align-items-center justify-content-center" style="width:38px;height:38px;background:var(--grad-main);color:#fff;font-weight:700;">${initial}</div>
+          <div><div class="fw-semibold small">${person.full_name}</div><div class="text-muted-custom small">${isReal ? 'NextRound AI candidate' : 'Candidate'}</div></div>
+        </div>
+      </div>
+    </div>`;
+}
+
+async function renderTestimonials(){
+  const row = document.getElementById('testimonialsRow');
+  if (!row) return;
+
+  let registered = [];
+  try {
+    registered = await UsersAPI.recentCandidates(3);
+  } catch (err) {
+    // Fall back silently for the visitor (no error toast on a marketing
+    // page), but log the real reason to the console — usually either the
+    // backend isn't running, or its CORS_ORIGINS doesn't include this
+    // page's origin (check config.py / .env on the backend).
+    console.error('Could not load recent candidates for testimonials:', err.message);
+    registered = [];
+  }
+
+  const needed = 3 - registered.length;
+  const cards = [
+    ...registered.map(p => ({ ...p, real: true })),
+    ...FALLBACK_TESTIMONIALS.slice(0, Math.max(needed, 0)).map(p => ({ ...p, real: false })),
+  ];
+
+  row.innerHTML = cards
+    .map((p, i) => testimonialCardHtml(p, p.real, (i * 0.05).toFixed(2)))
+    .join('');
+}
+
+renderTestimonials();
+</script>
+</body>
+</html>

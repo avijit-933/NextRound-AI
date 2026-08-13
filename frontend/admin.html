@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Panel — NextRound AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="topbar-mobile">
+  <button class="btn btn-sm text-body" onclick="toggleSidebar()"><i class="bi bi-list fs-3"></i></button>
+  <a class="navbar-brand mb-0" href="index.html" style="font-family:'Space Grotesk';font-weight:700;"><span class="brand-mark">N</span> NextRound</a>
+  <button class="theme-toggle" onclick="toggleTheme()"><i class="bi bi-moon-stars"></i></button>
+</div>
+
+<div class="app-shell">
+  <aside class="app-sidebar" id="sidebar">
+    <div class="sidebar-brand"><span class="brand-mark">N</span> NextRound<span class="text-gradient">AI</span></div>
+    <a href="dashboard.html" class="side-link"><i class="bi bi-grid-1x2-fill"></i> Dashboard</a>
+    <a href="profile.html" class="side-link"><i class="bi bi-person"></i> Profile</a>
+    <a href="resume.html" class="side-link"><i class="bi bi-file-earmark-text"></i> Resume</a>
+    <a href="interview_setup.html" class="side-link"><i class="bi bi-camera-video"></i> New Interview</a>
+    <a href="history.html" class="side-link"><i class="bi bi-clock-history"></i> History</a>
+    <div class="sidebar-section-label">Account</div>
+    <a href="admin.html" class="side-link active"><i class="bi bi-speedometer2"></i> Admin panel</a>
+    <a href="#" class="side-link" onclick="doLogout(event)"><i class="bi bi-box-arrow-right"></i> Log out</a>
+  </aside>
+
+  <main class="app-main">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div>
+        <h3 class="fw-bold mb-1">Admin panel</h3>
+        <p class="text-muted-custom mb-0">Platform-wide usage and moderation.</p>
+      </div>
+      <span class="pill"><i class="bi bi-shield-check"></i> Admin access</span>
+    </div>
+
+    <div class="row g-3 mb-4">
+      <div class="col-6 col-lg-3">
+        <div class="glass-card p-3">
+          <div class="text-muted-custom small">Total users</div>
+          <div class="fs-4 fw-bold mono mt-1" id="statTotalUsers">—</div>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div class="glass-card p-3">
+          <div class="text-muted-custom small">Total interviews</div>
+          <div class="fs-4 fw-bold mono mt-1" id="statTotalInterviews">—</div>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div class="glass-card p-3">
+          <div class="text-muted-custom small">Average score</div>
+          <div class="fs-4 fw-bold mono mt-1" id="statAvgScore">—</div>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div class="glass-card p-3">
+          <div class="text-muted-custom small">Reports generated</div>
+          <div class="fs-4 fw-bold mono mt-1" id="statReportsGenerated">—</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-4 mb-4">
+      <div class="col-lg-12">
+        <div class="glass-card p-4 h-100">
+          <div class="fw-semibold mb-3">Interview types (from generated reports)</div>
+          <canvas id="typeChart" height="90"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="glass-card p-4 mb-4">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <div class="fw-semibold">Manage users</div>
+        <input type="text" class="form-control form-control-nr" style="max-width:220px;" placeholder="Search users..." oninput="filterTable('usersTable', this.value)">
+      </div>
+      <div class="table-responsive">
+        <table class="table table-nr mb-0" id="usersTable">
+          <thead><tr><th>Name</th><th>Email</th><th>Joined</th><th>Status</th><th></th></tr></thead>
+          <tbody id="usersBody">
+            <tr><td colspan="5" class="text-center text-muted-custom py-4">Loading…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="glass-card p-4">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <div class="fw-semibold">Manage reports</div>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-nr mb-0">
+          <thead><tr><th>Report ID</th><th>User</th><th>Role</th><th>Score</th><th>Generated</th><th></th></tr></thead>
+          <tbody id="reportsBody">
+            <tr><td colspan="6" class="text-center text-muted-custom py-4">Loading…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script src="js/api.js"></script>
+<script src="js/main.js"></script>
+<script>
+requireAuth();
+(function guardAdmin(){
+  const user = Auth.getUser();
+  if (!user || !user.is_admin) {
+    showToast("You don't have access to the admin panel.", 'danger');
+    setTimeout(()=> window.location.href = 'dashboard.html', 1200);
+  }
+})();
+
+function filterTable(id, q){
+  q = q.toLowerCase();
+  document.querySelectorAll('#'+id+' tbody tr').forEach(row=>{
+    row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
+  });
+}
+
+const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+const textColor = isDark ? '#9AA3B8' : '#5B6178';
+const gridColor = isDark ? 'rgba(255,255,255,.06)' : 'rgba(0,0,0,.06)';
+
+function fmtDate(iso){
+  return new Date(iso).toLocaleDateString('en-US', { month:'short', day:'2-digit', year:'numeric' });
+}
+
+async function toggleUserStatus(userId, activate, btn){
+  const originalHtml = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner-ring"></span>';
+  try {
+    if (activate) await AdminAPI.activateUser(userId);
+    else await AdminAPI.deactivateUser(userId);
+    showToast(`User ${activate ? 'activated' : 'deactivated'}.`, 'success');
+    loadUsers();
+  } catch (err) {
+    showToast(err.message, 'danger');
+    btn.disabled = false;
+    btn.innerHTML = originalHtml;
+  }
+}
+
+async function loadStats(){
+  try {
+    const stats = await AdminAPI.stats();
+    document.getElementById('statTotalUsers').textContent = stats.total_users.toLocaleString();
+    document.getElementById('statTotalInterviews').textContent = stats.total_interviews.toLocaleString();
+    document.getElementById('statAvgScore').textContent = stats.average_score.toFixed(1);
+    document.getElementById('statReportsGenerated').textContent = stats.reports_generated.toLocaleString();
+  } catch (err) {
+    showToast(err.message, 'danger');
+  }
+}
+
+async function loadUsers(){
+  const tbody = document.getElementById('usersBody');
+  try {
+    const users = await AdminAPI.users();
+    tbody.innerHTML = users.length ? users.map(u => `
+      <tr>
+        <td>${u.full_name}</td>
+        <td class="text-muted-custom">${u.email}</td>
+        <td>${fmtDate(u.created_at)}</td>
+        <td>${u.is_active
+          ? '<span class="pill" style="color:var(--success);background:rgba(52,211,153,.1);border-color:rgba(52,211,153,.3);">Active</span>'
+          : '<span class="pill" style="color:var(--text-muted);">Inactive</span>'}</td>
+        <td>
+          ${u.is_active
+            ? `<button class="btn-nr-ghost btn btn-sm" onclick="toggleUserStatus(${u.id}, false, this)">Deactivate</button>`
+            : `<button class="btn-nr-ghost btn btn-sm" onclick="toggleUserStatus(${u.id}, true, this)">Activate</button>`}
+        </td>
+      </tr>
+    `).join('') : '<tr><td colspan="5" class="text-center text-muted-custom py-4">No users found.</td></tr>';
+  } catch (err) {
+    tbody.innerHTML = `<tr><td colspan="5" class="text-center text-danger py-4">${err.message}</td></tr>`;
+  }
+}
+
+async function loadReports(){
+  const tbody = document.getElementById('reportsBody');
+  try {
+    const reports = await AdminAPI.reports();
+    tbody.innerHTML = reports.length ? reports.map(r => `
+      <tr>
+        <td class="mono">RPT-${String(r.report_id).padStart(5,'0')}</td>
+        <td>${r.candidate}</td>
+        <td>${r.job_role}</td>
+        <td style="${r.score>=80?'color:var(--success);':r.score>=60?'color:var(--warning);':'color:var(--danger);'}">${r.score != null ? Math.round(r.score) : '—'}</td>
+        <td>${fmtDate(r.generated_at)}</td>
+        <td><a href="report.html?id=${r.interview_id}" class="btn-nr-ghost btn btn-sm"><i class="bi bi-eye"></i></a></td>
+      </tr>
+    `).join('') : '<tr><td colspan="6" class="text-center text-muted-custom py-4">No reports generated yet.</td></tr>';
+
+    // --- interview type doughnut, computed from real report data ---
+    const counts = {};
+    reports.forEach(r => { counts[r.interview_type] = (counts[r.interview_type]||0) + 1; });
+    const labels = Object.keys(counts);
+    new Chart(document.getElementById('typeChart'), {
+      type: 'doughnut',
+      data: {
+        labels: labels.length ? labels : ['No data'],
+        datasets: [{ data: labels.length ? labels.map(l=>counts[l]) : [1], backgroundColor:['#6366F1','#22D3EE','#A855F7','#FBBF24'], borderWidth:0 }]
+      },
+      options: { plugins:{legend:{position:'bottom',labels:{color:textColor,font:{size:11}}}} }
+    });
+  } catch (err) {
+    tbody.innerHTML = `<tr><td colspan="6" class="text-center text-danger py-4">${err.message}</td></tr>`;
+  }
+}
+
+loadStats();
+loadUsers();
+loadReports();
+</script>
+</body>
+</html>

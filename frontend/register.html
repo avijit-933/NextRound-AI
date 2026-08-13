@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Create account — NextRound AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="auth-shell">
+  <!-- Branded visual panel, mirrored from login.html so the two auth pages feel
+       like one cohesive product rather than a bare generic form. -->
+  <div class="auth-visual">
+    <div class="d-flex justify-content-between align-items-center">
+      <a class="navbar-brand" href="index.html"><span class="brand-mark">N</span>NextRound<span class="text-gradient">AI</span></a>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme"><i class="bi bi-moon-stars"></i></button>
+    </div>
+
+    <div class="auth-visual-copy my-4">
+      <h2 class="fw-bold mb-3">Your next interview starts with practice, not panic.</h2>
+      <p class="mb-0">Create your free account, upload your resume, and get a personalized
+        mock interview — with a real scored report afterward.</p>
+    </div>
+
+    <div>
+      <div class="auth-feature-row">
+        <i class="bi bi-file-earmark-text"></i>
+        <div class="txt"><strong>Upload your resume once</strong>We use it to personalize every question you get asked.</div>
+      </div>
+      <div class="auth-feature-row">
+        <i class="bi bi-mic"></i>
+        <div class="txt"><strong>Speak your answers</strong>Live transcription, no typing required (though you can edit anytime).</div>
+      </div>
+      <div class="auth-feature-row">
+        <i class="bi bi-clipboard-check"></i>
+        <div class="txt"><strong>See what "correct" looks like</strong>Every report shows a possible correct answer next to yours.</div>
+      </div>
+    </div>
+
+    <div class="auth-mock-card mt-2">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <div class="small text-white-50">Session score</div>
+        <span class="pill" style="background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.16);color:#fff;"><span class="pill-dot" style="background:var(--success);"></span> Completed</span>
+      </div>
+      <div class="d-flex align-items-end gap-2 mb-1">
+        <div class="fw-bold" style="font-family:'Space Grotesk';font-size:1.8rem;color:#fff;">84</div>
+        <div class="text-white-50 small mb-1">/ 100 overall</div>
+      </div>
+      <div class="nr-progress" style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.14);"><div class="bar" style="width:84%;"></div></div>
+    </div>
+
+    <div class="auth-stats-row mt-4">
+      <div class="stat"><div class="num">Free</div><div class="lbl">To get started</div></div>
+      <div class="stat"><div class="num">&lt;1 min</div><div class="lbl">To sign up</div></div>
+      <div class="stat"><div class="num">24/7</div><div class="lbl">Practice anytime</div></div>
+    </div>
+  </div>
+
+  <!-- Form panel -->
+  <div class="auth-form-panel">
+    <div class="auth-form-inner reveal is-visible">
+      <div class="glass-card p-4 p-md-5">
+        <div class="text-center mb-4">
+          <div class="brand-mark mx-auto mb-3 d-lg-none" style="width:46px;height:46px;font-size:1.2rem;">N</div>
+          <h3 class="fw-bold mb-1">Create your account</h3>
+          <p class="text-muted-custom small mb-0">Takes less than a minute.</p>
+        </div>
+        <form id="regForm" onsubmit="handleRegister(event)" novalidate>
+          <div class="mb-3">
+            <label class="form-label-nr">Full name</label>
+            <input type="text" class="form-control form-control-nr" id="regName" placeholder="Ananya Verma" required>
+            <div class="text-danger small mt-1 d-none" id="err-name">Enter your full name.</div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label-nr">Email address</label>
+            <input type="email" class="form-control form-control-nr" id="regEmail" placeholder="you@example.com" required>
+            <div class="text-danger small mt-1 d-none" id="err-email">Enter a valid email address.</div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label-nr">Phone number</label>
+            <input type="tel" class="form-control form-control-nr" id="regPhone" placeholder="98765 43210" required>
+            <div class="text-danger small mt-1 d-none" id="err-phone">Enter a valid 10-digit phone number.</div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label-nr">Password</label>
+            <input type="password" class="form-control form-control-nr" id="regPass" placeholder="Minimum 8 characters" required>
+            <div class="nr-progress mt-2" style="height:5px;"><div class="bar" id="pwStrength" style="width:0%;background:var(--danger);"></div></div>
+            <div class="text-danger small mt-1 d-none" id="err-pass">Password must be at least 8 characters.</div>
+          </div>
+          <div class="mb-4">
+            <label class="form-label-nr">Confirm password</label>
+            <input type="password" class="form-control form-control-nr" id="regConfirm" placeholder="Re-enter password" required>
+            <div class="text-danger small mt-1 d-none" id="err-confirm">Passwords don't match.</div>
+          </div>
+          <div class="form-check mb-4">
+            <input class="form-check-input" type="checkbox" id="agreeTerms" required>
+            <label class="form-check-label small text-muted-custom" for="agreeTerms">I agree to the Terms of Service and Privacy Policy.</label>
+          </div>
+          <button class="btn-nr-primary btn w-100" type="submit" id="regBtn">Create account</button>
+        </form>
+        <div class="d-flex align-items-center gap-2 my-4">
+          <div class="flex-grow-1" style="height:1px;background:var(--border);"></div>
+          <span class="text-muted-custom small">or</span>
+          <div class="flex-grow-1" style="height:1px;background:var(--border);"></div>
+        </div>
+        <p class="text-center text-muted-custom small mb-0">Already have an account? <a href="login.html" style="color:var(--primary-2);">Log in</a></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/api.js"></script>
+<script src="js/main.js"></script>
+<script>
+document.getElementById('regPass').addEventListener('input', (e)=>{
+  const v = e.target.value;
+  let score = 0;
+  if(v.length >= 8) score += 34;
+  if(/[A-Z]/.test(v)) score += 22;
+  if(/[0-9]/.test(v)) score += 22;
+  if(/[^A-Za-z0-9]/.test(v)) score += 22;
+  const bar = document.getElementById('pwStrength');
+  bar.style.width = Math.min(score,100)+'%';
+  bar.style.background = score < 40 ? 'var(--danger)' : score < 75 ? 'var(--warning)' : 'var(--success)';
+});
+
+async function handleRegister(e){
+  e.preventDefault();
+  const name = document.getElementById('regName');
+  const email = document.getElementById('regEmail');
+  const phone = document.getElementById('regPhone');
+  const pass = document.getElementById('regPass');
+  const confirm = document.getElementById('regConfirm');
+  let valid = true;
+
+  const nameOk = name.value.trim().length >= 3;
+  document.getElementById('err-name').classList.toggle('d-none', nameOk);
+  if(!nameOk) valid = false;
+
+  const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value);
+  document.getElementById('err-email').classList.toggle('d-none', emailOk);
+  if(!emailOk) valid = false;
+
+  const phoneOk = /^[6-9]\d{9}$/.test(phone.value.replace(/\D/g,''));
+  document.getElementById('err-phone').classList.toggle('d-none', phoneOk);
+  if(!phoneOk) valid = false;
+
+  const passOk = pass.value.length >= 8;
+  document.getElementById('err-pass').classList.toggle('d-none', passOk);
+  if(!passOk) valid = false;
+
+  const confirmOk = confirm.value === pass.value && confirm.value.length > 0;
+  document.getElementById('err-confirm').classList.toggle('d-none', confirmOk);
+  if(!confirmOk) valid = false;
+
+  if(!valid) return;
+
+  const btn = document.getElementById('regBtn');
+  const originalHtml = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner-ring"></span> Creating account...';
+
+  try {
+    const tokenResponse = await AuthAPI.register({
+      full_name: name.value.trim(),
+      email: email.value.trim(),
+      phone: phone.value.replace(/\D/g,''),
+      password: pass.value,
+      confirm_password: confirm.value,
+    });
+    Auth.setSession(tokenResponse);
+    showToast('Account created! Setting up your dashboard…', 'success');
+    setTimeout(()=> window.location.href='dashboard.html', 700);
+  } catch (err) {
+    showToast(err.message, 'danger');
+    btn.disabled = false;
+    btn.innerHTML = originalHtml;
+  }
+}
+</script>
+</body>
+</html>

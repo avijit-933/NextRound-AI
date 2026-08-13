@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interview Result — NextRound AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="topbar-mobile">
+  <button class="btn btn-sm text-body" onclick="toggleSidebar()"><i class="bi bi-list fs-3"></i></button>
+  <a class="navbar-brand mb-0" href="index.html" style="font-family:'Space Grotesk';font-weight:700;"><span class="brand-mark">N</span> NextRound</a>
+  <button class="theme-toggle" onclick="toggleTheme()"><i class="bi bi-moon-stars"></i></button>
+</div>
+
+<div class="app-shell">
+  <aside class="app-sidebar" id="sidebar">
+    <div class="sidebar-brand"><span class="brand-mark">N</span> NextRound<span class="text-gradient">AI</span></div>
+    <a href="dashboard.html" class="side-link"><i class="bi bi-grid-1x2-fill"></i> Dashboard</a>
+    <a href="profile.html" class="side-link"><i class="bi bi-person"></i> Profile</a>
+    <a href="resume.html" class="side-link"><i class="bi bi-file-earmark-text"></i> Resume</a>
+    <a href="interview_setup.html" class="side-link"><i class="bi bi-camera-video"></i> New Interview</a>
+    <a href="history.html" class="side-link active"><i class="bi bi-clock-history"></i> History</a>
+    <div class="sidebar-section-label">Account</div>
+    <a href="admin.html" class="side-link"><i class="bi bi-speedometer2"></i> Admin panel</a>
+    <a href="#" class="side-link" onclick="doLogout(event)"><i class="bi bi-box-arrow-right"></i> Log out</a>
+  </aside>
+
+  <main class="app-main">
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+      <div>
+        <div class="eyebrow mb-1" id="resultMeta">Loading…</div>
+        <h3 class="fw-bold mb-0">Your interview result</h3>
+      </div>
+      <div class="d-flex gap-2">
+        <a href="#" class="btn-nr-outline btn" id="reportLink"><i class="bi bi-file-earmark-pdf me-1"></i> Detailed report</a>
+        <a href="interview_setup.html" class="btn-nr-primary btn"><i class="bi bi-arrow-repeat me-1"></i> Retake</a>
+      </div>
+    </div>
+
+    <div id="resultContent" style="display:none;">
+      <div class="row g-4">
+        <div class="col-lg-4">
+          <div class="glass-card p-4 text-center h-100 d-flex flex-column align-items-center justify-content-center">
+            <div class="eyebrow mb-3">Overall score</div>
+            <div class="ring mb-3" style="width:170px;height:170px;" id="overallRing">
+              <div class="ring-value"><div class="num" style="font-size:2.2rem;" id="overallScoreNum">—</div><div class="lbl">/ 100</div></div>
+            </div>
+            <span class="pill" id="performancePill"><i class="bi bi-trophy-fill"></i> —</span>
+          </div>
+        </div>
+        <div class="col-lg-8">
+          <div class="row g-3">
+            <div class="col-6 col-md-3 text-center">
+              <div class="glass-card p-3"><div class="ring sm mx-auto mb-2" id="ring-technical"><div class="ring-value"><div class="num">—</div></div></div><div class="small text-muted-custom">Technical</div></div>
+            </div>
+            <div class="col-6 col-md-3 text-center">
+              <div class="glass-card p-3"><div class="ring sm mx-auto mb-2" id="ring-communication"><div class="ring-value"><div class="num">—</div></div></div><div class="small text-muted-custom">Communication</div></div>
+            </div>
+            <div class="col-6 col-md-3 text-center">
+              <div class="glass-card p-3"><div class="ring sm mx-auto mb-2" id="ring-confidence"><div class="ring-value"><div class="num">—</div></div></div><div class="small text-muted-custom">Confidence</div></div>
+            </div>
+            <div class="col-6 col-md-3 text-center">
+              <div class="glass-card p-3"><div class="ring sm mx-auto mb-2" id="ring-grammar"><div class="ring-value"><div class="num">—</div></div></div><div class="small text-muted-custom">Grammar</div></div>
+            </div>
+            <div class="col-6 col-md-3 text-center">
+              <div class="glass-card p-3"><div class="ring sm mx-auto mb-2" id="ring-eye_contact"><div class="ring-value"><div class="num">—</div></div></div><div class="small text-muted-custom">Eye contact</div></div>
+            </div>
+            <div class="col-6 col-md-3 text-center">
+              <div class="glass-card p-3"><div class="ring sm mx-auto mb-2" id="ring-emotion"><div class="ring-value"><div class="num">—</div></div></div><div class="small text-muted-custom">Emotion</div></div>
+            </div>
+            <div class="col-6 col-md-3 text-center">
+              <div class="glass-card p-3"><div class="ring sm mx-auto mb-2" id="ring-body_language"><div class="ring-value"><div class="num">—</div></div></div><div class="small text-muted-custom">Body language</div></div>
+            </div>
+            <div class="col-6 col-md-3 text-center">
+              <div class="glass-card p-3"><div class="ring sm mx-auto mb-2" id="ring-problem_solving"><div class="ring-value"><div class="num">—</div></div></div><div class="small text-muted-custom">Problem solving</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-4 mt-1">
+        <div class="col-md-4">
+          <div class="glass-card p-4 h-100">
+            <div class="fw-semibold mb-3 text-success"><i class="bi bi-check-circle me-1"></i> Strengths</div>
+            <ul class="ps-3 text-muted-custom small mb-0" id="strengthsList"></ul>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="glass-card p-4 h-100">
+            <div class="fw-semibold mb-3" style="color:var(--warning);"><i class="bi bi-exclamation-circle me-1"></i> Weaknesses</div>
+            <ul class="ps-3 text-muted-custom small mb-0" id="weaknessesList"></ul>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="glass-card p-4 h-100">
+            <div class="fw-semibold mb-3" style="color:var(--primary-2);"><i class="bi bi-lightbulb me-1"></i> Suggestions</div>
+            <ul class="ps-3 text-muted-custom small mb-0" id="suggestionsList"></ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="resultLoading" class="text-center text-muted-custom py-5">
+      <span class="spinner-ring" style="border-color:rgba(120,130,160,.25);border-top-color:var(--primary-2);"></span>
+      <div class="mt-2">Loading your result…</div>
+    </div>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/api.js"></script>
+<script src="js/main.js"></script>
+<script>
+requireAuth();
+
+const urlParams = new URLSearchParams(window.location.search);
+const interviewId = urlParams.get('id');
+
+function performanceLabel(score){
+  if (score >= 85) return { text: 'Excellent performance', color: 'var(--success)', bg: 'rgba(52,211,153,.12)', border: 'rgba(52,211,153,.3)' };
+  if (score >= 70) return { text: 'Good performance', color: 'var(--primary-2)', bg: 'rgba(34,211,238,.12)', border: 'rgba(34,211,238,.3)' };
+  if (score >= 50) return { text: 'Needs improvement', color: 'var(--warning)', bg: 'rgba(251,191,36,.12)', border: 'rgba(251,191,36,.3)' };
+  return { text: 'Requires more practice', color: 'var(--danger)', bg: 'rgba(248,113,113,.12)', border: 'rgba(248,113,113,.3)' };
+}
+
+function setRingScore(id, score){
+  const el = document.getElementById(id);
+  if (!el) return;
+  const rounded = Math.round(score);
+  el.style.setProperty('--pct', rounded);
+  el.style.setProperty('--ring-color', scoreColor(rounded));
+  el.querySelector('.num').textContent = rounded;
+}
+
+function fillList(id, items){
+  const ul = document.getElementById(id);
+  ul.innerHTML = (items && items.length)
+    ? items.map(i => `<li class="mb-2">${i}</li>`).join('')
+    : '<li class="mb-2 text-muted-custom">Nothing notable here.</li>';
+}
+
+async function loadResult(){
+  if (!interviewId) {
+    showToast('No interview specified.', 'danger');
+    return;
+  }
+  try {
+    const data = await ReportsAPI.result(interviewId);
+    const { interview, score, feedback } = data;
+
+    document.getElementById('resultMeta').textContent =
+      `${interview.interview_type} · ${interview.job_role} · ${new Date(interview.started_at).toLocaleDateString('en-US',{month:'short',day:'2-digit',year:'numeric'})}`;
+    document.getElementById('reportLink').href = `report.html?id=${interview.id}`;
+
+    const overall = Math.round(score.overall_score);
+    document.getElementById('overallScoreNum').textContent = overall;
+    const ring = document.getElementById('overallRing');
+    ring.style.setProperty('--pct', overall);
+    ring.style.setProperty('--ring-color', scoreColor(overall));
+
+    const perf = performanceLabel(overall);
+    const pill = document.getElementById('performancePill');
+    pill.innerHTML = `<i class="bi bi-trophy-fill"></i> ${perf.text}`;
+    pill.style.color = perf.color;
+    pill.style.background = perf.bg;
+    pill.style.borderColor = perf.border;
+
+    setRingScore('ring-technical', score.technical_score);
+    setRingScore('ring-communication', score.communication_score);
+    setRingScore('ring-confidence', score.confidence_score);
+    setRingScore('ring-grammar', score.grammar_score);
+    setRingScore('ring-eye_contact', score.eye_contact_score);
+    setRingScore('ring-emotion', score.emotion_score);
+    setRingScore('ring-body_language', score.body_language_score);
+    setRingScore('ring-problem_solving', score.problem_solving_score);
+
+    fillList('strengthsList', feedback.strengths);
+    fillList('weaknessesList', feedback.weaknesses);
+    fillList('suggestionsList', feedback.suggestions);
+
+    document.getElementById('resultLoading').style.display = 'none';
+    document.getElementById('resultContent').style.display = 'block';
+  } catch (err) {
+    document.getElementById('resultLoading').innerHTML =
+      `<div class="text-danger">${err.message}</div>`;
+  }
+}
+
+loadResult();
+</script>
+</body>
+</html>

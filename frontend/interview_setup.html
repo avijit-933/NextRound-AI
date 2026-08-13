@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>New Interview — NextRound AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<link href="css/style.css" rel="stylesheet">
+<style>
+.choice-card{
+  border:1px solid var(--border); border-radius:16px; padding:1.1rem; cursor:pointer;
+  background:var(--surface); transition:.18s; text-align:center; height:100%;
+}
+.choice-card:hover{border-color:rgba(99,102,241,.4);}
+.choice-card.selected{border-color:var(--primary-2); background:linear-gradient(135deg,rgba(99,102,241,.14),rgba(34,211,238,.08)); box-shadow:0 0 0 1px var(--primary-2) inset;}
+.choice-card i{font-size:1.5rem;color:var(--primary-2);}
+</style>
+</head>
+<body>
+
+<div class="topbar-mobile">
+  <button class="btn btn-sm text-body" onclick="toggleSidebar()"><i class="bi bi-list fs-3"></i></button>
+  <a class="navbar-brand mb-0" href="index.html" style="font-family:'Space Grotesk';font-weight:700;"><span class="brand-mark">N</span> NextRound</a>
+  <button class="theme-toggle" onclick="toggleTheme()"><i class="bi bi-moon-stars"></i></button>
+</div>
+
+<div class="app-shell">
+  <aside class="app-sidebar" id="sidebar">
+    <div class="sidebar-brand"><span class="brand-mark">N</span> NextRound<span class="text-gradient">AI</span></div>
+    <a href="dashboard.html" class="side-link"><i class="bi bi-grid-1x2-fill"></i> Dashboard</a>
+    <a href="profile.html" class="side-link"><i class="bi bi-person"></i> Profile</a>
+    <a href="resume.html" class="side-link"><i class="bi bi-file-earmark-text"></i> Resume</a>
+    <a href="interview_setup.html" class="side-link active"><i class="bi bi-camera-video"></i> New Interview</a>
+    <a href="history.html" class="side-link"><i class="bi bi-clock-history"></i> History</a>
+    <div class="sidebar-section-label">Account</div>
+    <a href="admin.html" class="side-link"><i class="bi bi-speedometer2"></i> Admin panel</a>
+    <a href="#" class="side-link" onclick="doLogout(event)"><i class="bi bi-box-arrow-right"></i> Log out</a>
+  </aside>
+
+  <main class="app-main">
+    <h3 class="fw-bold mb-1">Set up your interview</h3>
+    <p class="text-muted-custom mb-4">Gemini will generate personalized questions from your uploaded resume.</p>
+
+    <div class="glass-card p-4 p-md-5">
+      <!-- Interview type -->
+      <div class="mb-4">
+        <div class="form-label-nr mb-3">Interview type</div>
+        <div class="row g-3" id="typeGroup">
+          <div class="col-6 col-md-3"><div class="choice-card" data-value="HR" onclick="select('typeGroup', this)"><i class="bi bi-people d-block mb-2"></i><div class="fw-semibold small">HR</div></div></div>
+          <div class="col-6 col-md-3"><div class="choice-card selected" data-value="Technical" onclick="select('typeGroup', this)"><i class="bi bi-cpu d-block mb-2"></i><div class="fw-semibold small">Technical</div></div></div>
+          <div class="col-6 col-md-3"><div class="choice-card" data-value="Coding" onclick="select('typeGroup', this)"><i class="bi bi-code-slash d-block mb-2"></i><div class="fw-semibold small">Coding</div></div></div>
+          <div class="col-6 col-md-3"><div class="choice-card" data-value="Aptitude" onclick="select('typeGroup', this)"><i class="bi bi-puzzle d-block mb-2"></i><div class="fw-semibold small">Aptitude</div></div></div>
+        </div>
+      </div>
+
+      <!-- Difficulty -->
+      <div class="mb-4">
+        <div class="form-label-nr mb-3">Difficulty</div>
+        <div class="row g-3" id="diffGroup">
+          <div class="col-4"><div class="choice-card" data-value="Beginner" onclick="select('diffGroup', this)"><i class="bi bi-star d-block mb-2"></i><div class="fw-semibold small">Beginner</div></div></div>
+          <div class="col-4"><div class="choice-card selected" data-value="Intermediate" onclick="select('diffGroup', this)"><i class="bi bi-star-half d-block mb-2"></i><div class="fw-semibold small">Intermediate</div></div></div>
+          <div class="col-4"><div class="choice-card" data-value="Advanced" onclick="select('diffGroup', this)"><i class="bi bi-stars d-block mb-2"></i><div class="fw-semibold small">Advanced</div></div></div>
+        </div>
+      </div>
+
+      <div class="row g-4">
+        <div class="col-md-6">
+          <label class="form-label-nr">Job role</label>
+          <select class="form-select form-select-nr" id="jobRole" onchange="onRoleChange()">
+            <optgroup label="Software & AI">
+              <option>Frontend Developer</option>
+              <option>Backend Developer</option>
+              <option>Full Stack Developer</option>
+              <option>Python Developer</option>
+              <option>Java Developer</option>
+              <option selected>AI Engineer</option>
+              <option>Machine Learning Engineer</option>
+              <option>Data Scientist</option>
+              <option>Data Analyst</option>
+              <option>DevOps Engineer</option>
+              <option>Mobile App Developer</option>
+              <option>QA / SDET</option>
+            </optgroup>
+            <optgroup label="Product & Design">
+              <option>Product Manager</option>
+              <option>UI/UX Designer</option>
+              <option>Business Analyst</option>
+            </optgroup>
+            <optgroup label="Other">
+              <option value="__custom">Other (type your own)</option>
+            </optgroup>
+          </select>
+          <input type="text" class="form-control form-control-nr mt-2 d-none" id="jobRoleCustom" placeholder="e.g. Site Reliability Engineer">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label-nr">Duration</label>
+          <select class="form-select form-select-nr" id="duration">
+            <option value="10">10 minutes</option>
+            <option value="20" selected>20 minutes</option>
+            <option value="30">30 minutes</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label-nr">Language</label>
+          <select class="form-select form-select-nr" id="language">
+            <option selected>English</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="glass-card-strong p-3 mt-4 d-flex align-items-center gap-3" id="resumeStatusCard">
+        <i class="bi bi-hourglass-split fs-4 text-muted-custom"></i>
+        <div class="small">
+          <div class="fw-semibold" id="resumeStatusTitle">Checking your resume…</div>
+          <div class="text-muted-custom" id="resumeStatusSubtitle">One moment.</div>
+        </div>
+      </div>
+
+      <button class="btn-nr-primary btn btn-lg w-100 mt-4" id="startBtn" onclick="startInterview()">
+        <i class="bi bi-play-fill me-1"></i> Start interview
+      </button>
+    </div>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/api.js"></script>
+<script src="js/main.js"></script>
+<script>
+requireAuth();
+function select(groupId, el){
+  document.querySelectorAll('#'+groupId+' .choice-card').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function onRoleChange(){
+  const select = document.getElementById('jobRole');
+  const custom = document.getElementById('jobRoleCustom');
+  const isCustom = select.value === '__custom';
+  custom.classList.toggle('d-none', !isCustom);
+  if (isCustom) custom.focus();
+}
+
+function getSelectedRole(){
+  const select = document.getElementById('jobRole');
+  if (select.value === '__custom') {
+    return document.getElementById('jobRoleCustom').value.trim();
+  }
+  return select.value;
+}
+
+(async function checkResume(){
+  const icon = document.querySelector('#resumeStatusCard i');
+  try {
+    const resume = await ResumeAPI.active();
+    icon.className = 'bi bi-file-earmark-check fs-4 text-success';
+    document.getElementById('resumeStatusTitle').textContent = `${resume.filename} is linked`;
+    document.getElementById('resumeStatusSubtitle').textContent = resume.embedded
+      ? 'Questions will be personalized using RAG over this resume.'
+      : 'Still finishing embeddings — questions may be more general for now.';
+  } catch {
+    icon.className = 'bi bi-exclamation-triangle fs-4';
+    icon.style.color = 'var(--warning)';
+    document.getElementById('resumeStatusTitle').textContent = 'No resume uploaded yet';
+    document.getElementById('resumeStatusSubtitle').innerHTML =
+      'Questions will be generic. <a href="resume.html" style="color:var(--primary-2);">Upload one first &rarr;</a>';
+  }
+})();
+
+async function startInterview(){
+  const type = document.querySelector('#typeGroup .selected').dataset.value;
+  const difficulty = document.querySelector('#diffGroup .selected').dataset.value;
+  const role = getSelectedRole();
+  const duration = parseInt(document.getElementById('duration').value, 10);
+  const language = document.getElementById('language').value;
+
+  if (!role) { showToast('Enter the job role you want to practice for.', 'danger'); return; }
+
+  const btn = document.getElementById('startBtn');
+  const originalHtml = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner-ring"></span> Generating personalized questions…';
+
+  try {
+    const interview = await InterviewAPI.create({
+      interview_type: type,
+      difficulty: difficulty,
+      job_role: role,
+      duration_minutes: duration,
+      language: language,
+    });
+    // interview.html has no dedicated "get single interview" endpoint to re-fetch
+    // these from, so pass the just-chosen setup straight through the session —
+    // this is what makes the role/type badge and timer on the interview page
+    // reflect what was actually selected here, instead of a hardcoded default.
+    sessionStorage.setItem('nr-interview-meta', JSON.stringify({
+      interview_id: interview.id,
+      job_role: role,
+      interview_type: type,
+      difficulty: difficulty,
+      duration_minutes: duration,
+    }));
+    window.location.href = `interview.html?id=${interview.id}`;
+  } catch (err) {
+    showToast(err.message, 'danger');
+    btn.disabled = false;
+    btn.innerHTML = originalHtml;
+  }
+}
+</script>
+</body>
+</html>

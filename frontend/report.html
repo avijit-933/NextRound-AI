@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Detailed Report — NextRound AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<link href="css/style.css" rel="stylesheet">
+<style>@media print{ .app-sidebar, .topbar-mobile, .no-print{display:none !important;} .app-main{margin-left:0 !important;} }</style>
+</head>
+<body>
+
+<div class="topbar-mobile no-print">
+  <button class="btn btn-sm text-body" onclick="toggleSidebar()"><i class="bi bi-list fs-3"></i></button>
+  <a class="navbar-brand mb-0" href="index.html" style="font-family:'Space Grotesk';font-weight:700;"><span class="brand-mark">N</span> NextRound</a>
+  <button class="theme-toggle" onclick="toggleTheme()"><i class="bi bi-moon-stars"></i></button>
+</div>
+
+<div class="app-shell">
+  <aside class="app-sidebar no-print" id="sidebar">
+    <div class="sidebar-brand"><span class="brand-mark">N</span> NextRound<span class="text-gradient">AI</span></div>
+    <a href="dashboard.html" class="side-link"><i class="bi bi-grid-1x2-fill"></i> Dashboard</a>
+    <a href="profile.html" class="side-link"><i class="bi bi-person"></i> Profile</a>
+    <a href="resume.html" class="side-link"><i class="bi bi-file-earmark-text"></i> Resume</a>
+    <a href="interview_setup.html" class="side-link"><i class="bi bi-camera-video"></i> New Interview</a>
+    <a href="history.html" class="side-link active"><i class="bi bi-clock-history"></i> History</a>
+    <div class="sidebar-section-label">Account</div>
+    <a href="admin.html" class="side-link"><i class="bi bi-speedometer2"></i> Admin panel</a>
+    <a href="#" class="side-link" onclick="doLogout(event)"><i class="bi bi-box-arrow-right"></i> Log out</a>
+  </aside>
+
+  <main class="app-main">
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3 no-print">
+      <div>
+        <div class="eyebrow mb-1">Detailed report</div>
+        <h3 class="fw-bold mb-0" id="reportTitle">Loading…</h3>
+      </div>
+      <button class="btn-nr-primary btn" id="downloadBtn" onclick="downloadPdf()"><i class="bi bi-file-earmark-pdf me-1"></i> Download PDF</button>
+    </div>
+
+    <div id="reportLoading" class="text-center text-muted-custom py-5">
+      <span class="spinner-ring" style="border-color:rgba(120,130,160,.25);border-top-color:var(--primary-2);"></span>
+      <div class="mt-2">Loading report…</div>
+    </div>
+
+    <div id="reportContent" style="display:none;">
+      <div class="glass-card p-4 mb-4">
+        <div class="row g-3">
+          <div class="col-6 col-md-3"><div class="text-muted-custom small">Candidate</div><div class="fw-semibold" id="metaCandidate">—</div></div>
+          <div class="col-6 col-md-3"><div class="text-muted-custom small">Date</div><div class="fw-semibold" id="metaDate">—</div></div>
+          <div class="col-6 col-md-3"><div class="text-muted-custom small">Duration</div><div class="fw-semibold" id="metaDuration">—</div></div>
+          <div class="col-6 col-md-3"><div class="text-muted-custom small">Final score</div><div class="fw-semibold text-success" id="metaScore">—</div></div>
+        </div>
+        <div class="divider-fade my-3"></div>
+        <div class="d-flex flex-wrap align-items-center gap-3">
+          <div class="text-muted-custom small">Average answer correctness</div>
+          <div class="flex-grow-1" style="min-width:160px;max-width:320px;">
+            <div class="nr-progress"><div class="bar" id="correctnessBar" style="width:0%;"></div></div>
+          </div>
+          <div class="fw-bold mono" id="correctnessPct" style="color:var(--primary-2);">—%</div>
+        </div>
+      </div>
+
+      <div class="row g-4">
+        <div class="col-lg-7">
+          <div class="glass-card p-4">
+            <div class="fw-semibold mb-3">Questions & answers</div>
+            <div class="accordion" id="qaAccordion"></div>
+          </div>
+        </div>
+
+        <div class="col-lg-5">
+          <div class="glass-card p-4 mb-4">
+            <div class="fw-semibold mb-3">Emotion timeline</div>
+            <canvas id="emotionChart" height="160"></canvas>
+          </div>
+          <div class="glass-card p-4 mb-4">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <div class="fw-semibold">Eye contact</div>
+              <div class="fw-bold mono text-success" id="eyeContactPct">—%</div>
+            </div>
+            <div class="nr-progress"><div class="bar" id="eyeContactBar" style="width:0%;"></div></div>
+            <div class="text-muted-custom small mt-2" id="eyeContactNote">—</div>
+          </div>
+          <div class="glass-card p-4">
+            <div class="fw-semibold mb-3"><i class="bi bi-lightbulb me-1"></i> Recommendations</div>
+            <ul class="ps-3 text-muted-custom small mb-0" id="recommendationsList"></ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script src="js/api.js"></script>
+<script src="js/main.js"></script>
+<script>
+requireAuth();
+
+const urlParams = new URLSearchParams(window.location.search);
+const interviewId = urlParams.get('id');
+
+const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+const textColor = isDark ? '#9AA3B8' : '#5B6178';
+const gridColor = isDark ? 'rgba(255,255,255,.06)' : 'rgba(0,0,0,.06)';
+
+async function downloadPdf(){
+  const btn = document.getElementById('downloadBtn');
+  const originalHtml = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner-ring"></span> Preparing PDF...';
+  try {
+    await ReportsAPI.generateReport(interviewId);
+    // The download endpoint requires a Bearer token, which window.open()
+    // can't send — fetch it as an authenticated blob instead, then trigger
+    // a real file download from that blob.
+    const blob = await ReportsAPI.downloadBlob(interviewId);
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `NextRoundAI_Report_${interviewId}.pdf`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    window.URL.revokeObjectURL(url);
+  } catch (err) {
+    showToast(err.message, 'danger');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = originalHtml;
+  }
+}
+
+function fmtTime(seconds){
+  const m = Math.floor(seconds/60);
+  return `${m}m`;
+}
+
+async function loadReport(){
+  if (!interviewId) {
+    document.getElementById('reportLoading').innerHTML = '<div class="text-danger">No interview specified.</div>';
+    return;
+  }
+  try {
+    const data = await ReportsAPI.detail(interviewId);
+    const { interview, score, feedback, qa_pairs, eye_contact_timeline, emotion_timeline, candidate_name } = data;
+
+    document.getElementById('reportTitle').textContent = `${interview.job_role} · ${interview.interview_type} Interview`;
+    document.getElementById('metaCandidate').textContent = candidate_name;
+    document.getElementById('metaDate').textContent = new Date(interview.started_at).toLocaleDateString('en-US',{month:'short',day:'2-digit',year:'numeric'});
+    document.getElementById('metaDuration').textContent = `${interview.duration_minutes} minutes`;
+    document.getElementById('metaScore').textContent = `${Math.round(score.overall_score)} / 100`;
+
+    // --- Q&A accordion ---
+    function correctnessColor(pct){
+      if (pct === null || pct === undefined) return 'var(--text-muted)';
+      if (pct >= 75) return 'var(--success)';
+      if (pct >= 45) return 'var(--warning)';
+      return 'var(--danger)';
+    }
+    const qaAccordion = document.getElementById('qaAccordion');
+    qaAccordion.innerHTML = qa_pairs.map((qa, i) => {
+      const pct = qa.correctness_pct;
+      const pctLabel = (pct === null || pct === undefined) ? '—' : Math.round(pct) + '%';
+      return `
+      <div class="accordion-item" style="background:transparent;border-color:var(--border);">
+        <h2 class="accordion-header">
+          <button class="accordion-button ${i>0?'collapsed':''} d-flex justify-content-between" style="background:var(--surface);color:var(--text);" type="button" data-bs-toggle="collapse" data-bs-target="#qa${i}">
+            <span>Q${i+1} · ${qa.question.length > 60 ? qa.question.slice(0,60)+'…' : qa.question}</span>
+            <span class="badge rounded-pill ms-2" style="background:${correctnessColor(pct)}22;color:${correctnessColor(pct)};font-weight:700;">${pctLabel} correct</span>
+          </button>
+        </h2>
+        <div id="qa${i}" class="accordion-collapse collapse ${i===0?'show':''}" data-bs-parent="#qaAccordion">
+          <div class="accordion-body text-muted-custom small">
+            <strong class="text-body d-block mb-1"><i class="bi bi-question-circle me-1"></i>Question:</strong>
+            ${qa.question}
+
+            <strong class="text-body d-block mt-3 mb-1"><i class="bi bi-mic me-1"></i>Your answer:</strong>
+            ${qa.answer ? qa.answer : '<em>Skipped</em>'}
+
+            ${pct !== null && pct !== undefined ? `
+            <div class="mt-3">
+              <div class="d-flex justify-content-between align-items-center mb-1">
+                <strong class="text-body"><i class="bi bi-check2-circle me-1"></i>How much of your answer was correct</strong>
+                <span class="fw-bold mono" style="color:${correctnessColor(pct)};">${pctLabel}</span>
+              </div>
+              <div class="nr-progress"><div class="bar" style="width:${Math.round(pct)}%;background:${correctnessColor(pct)};"></div></div>
+            </div>` : ''}
+
+            ${qa.possible_answer ? `
+            <strong class="text-body d-block mt-3 mb-1"><i class="bi bi-lightbulb me-1"></i>A possible correct answer:</strong>
+            <div class="glass-card-strong p-3 mt-1" style="border-radius:12px;">${qa.possible_answer}</div>` : ''}
+
+            ${qa.ai_feedback ? `
+            <strong class="text-body d-block mt-3 mb-1"><i class="bi bi-robot me-1"></i>AI feedback on this answer:</strong>
+            <em>${qa.ai_feedback}</em>` : ''}
+          </div>
+        </div>
+      </div>
+    `; }).join('') || '<div class="text-muted-custom small">No questions recorded.</div>';
+
+    // --- average correctness summary bar ---
+    const avgCorrectness = data.avg_correctness_pct;
+    if (avgCorrectness !== null && avgCorrectness !== undefined) {
+      document.getElementById('correctnessPct').textContent = Math.round(avgCorrectness) + '%';
+      document.getElementById('correctnessPct').style.color = correctnessColor(avgCorrectness);
+      document.getElementById('correctnessBar').style.width = Math.round(avgCorrectness) + '%';
+      document.getElementById('correctnessBar').style.background = correctnessColor(avgCorrectness);
+    } else {
+      document.getElementById('correctnessPct').textContent = 'N/A';
+    }
+
+    // --- eye contact ---
+    const eyeAvg = eye_contact_timeline.length
+      ? eye_contact_timeline.reduce((a,e)=>a+e.eye_contact_pct,0) / eye_contact_timeline.length
+      : score.eye_contact_score;
+    document.getElementById('eyeContactPct').textContent = Math.round(eyeAvg) + '%';
+    document.getElementById('eyeContactBar').style.width = Math.round(eyeAvg) + '%';
+    const aboveThreshold = eye_contact_timeline.filter(e => e.eye_contact_pct >= 80).length;
+    document.getElementById('eyeContactNote').textContent = eye_contact_timeline.length
+      ? `Maintained above 80% for ${aboveThreshold} of ${eye_contact_timeline.length} tracked moments.`
+      : 'No webcam tracking data recorded for this session.';
+
+    // --- recommendations ---
+    document.getElementById('recommendationsList').innerHTML = feedback.suggestions.length
+      ? feedback.suggestions.map(s => `<li class="mb-2">${s}</li>`).join('')
+      : '<li class="mb-2 text-muted-custom">No specific recommendations.</li>';
+
+    // --- emotion timeline chart ---
+    new Chart(document.getElementById('emotionChart'), {
+      type: 'line',
+      data: {
+        labels: emotion_timeline.length ? emotion_timeline.map(e => fmtTime(e.timestamp_seconds)) : ['No data'],
+        datasets: [
+          {label:'Happy', data: emotion_timeline.length ? emotion_timeline.map(e=>e.happy) : [0], borderColor:'#34D399', tension:.4, pointRadius:2, borderWidth:2},
+          {label:'Neutral', data: emotion_timeline.length ? emotion_timeline.map(e=>e.neutral) : [0], borderColor:'#22D3EE', tension:.4, pointRadius:2, borderWidth:2},
+          {label:'Fear', data: emotion_timeline.length ? emotion_timeline.map(e=>e.fear) : [0], borderColor:'#A855F7', tension:.4, pointRadius:2, borderWidth:2}
+        ]
+      },
+      options:{
+        plugins:{legend:{labels:{color:textColor, font:{size:10}}}},
+        scales:{ y:{min:0,max:100,grid:{color:gridColor},ticks:{color:textColor}}, x:{grid:{display:false},ticks:{color:textColor}} }
+      }
+    });
+
+    document.getElementById('reportLoading').style.display = 'none';
+    document.getElementById('reportContent').style.display = 'block';
+  } catch (err) {
+    document.getElementById('reportLoading').innerHTML = `<div class="text-danger">${err.message}</div>`;
+  }
+}
+
+loadReport();
+</script>
+</body>
+</html>

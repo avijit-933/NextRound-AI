@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Resume — NextRound AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<link href="css/style.css" rel="stylesheet">
+<style>
+.dropzone{
+  border:2px dashed var(--border); border-radius:20px; padding:2.5rem 1.5rem;
+  text-align:center; cursor:pointer; transition:.2s;
+}
+.dropzone.dragover, .dropzone:hover{border-color:var(--primary-2); background:var(--surface);}
+.extract-step{display:flex;align-items:center;gap:.6rem;padding:.5rem 0;color:var(--text-muted);font-size:.88rem;}
+.extract-step.done{color:var(--success);}
+.extract-step i{width:16px;}
+</style>
+</head>
+<body>
+
+<div class="topbar-mobile">
+  <button class="btn btn-sm text-body" onclick="toggleSidebar()"><i class="bi bi-list fs-3"></i></button>
+  <a class="navbar-brand mb-0" href="index.html" style="font-family:'Space Grotesk';font-weight:700;"><span class="brand-mark">N</span> NextRound</a>
+  <button class="theme-toggle" onclick="toggleTheme()"><i class="bi bi-moon-stars"></i></button>
+</div>
+
+<div class="app-shell">
+  <aside class="app-sidebar" id="sidebar">
+    <div class="sidebar-brand"><span class="brand-mark">N</span> NextRound<span class="text-gradient">AI</span></div>
+    <a href="dashboard.html" class="side-link"><i class="bi bi-grid-1x2-fill"></i> Dashboard</a>
+    <a href="profile.html" class="side-link"><i class="bi bi-person"></i> Profile</a>
+    <a href="resume.html" class="side-link active"><i class="bi bi-file-earmark-text"></i> Resume</a>
+    <a href="interview_setup.html" class="side-link"><i class="bi bi-camera-video"></i> New Interview</a>
+    <a href="history.html" class="side-link"><i class="bi bi-clock-history"></i> History</a>
+    <div class="sidebar-section-label">Account</div>
+    <a href="admin.html" class="side-link"><i class="bi bi-speedometer2"></i> Admin panel</a>
+    <a href="#" class="side-link" onclick="doLogout(event)"><i class="bi bi-box-arrow-right"></i> Log out</a>
+  </aside>
+
+  <main class="app-main">
+    <h3 class="fw-bold mb-1">Resume</h3>
+    <p class="text-muted-custom mb-4">Upload your resume once — every interview after this is generated around it.</p>
+
+    <div class="row g-4">
+      <div class="col-lg-5">
+        <div class="glass-card p-4 mb-4">
+          <div class="fw-semibold mb-3">Upload PDF</div>
+          <div class="dropzone" id="dropzone" onclick="document.getElementById('fileInput').click()">
+            <i class="bi bi-cloud-arrow-up fs-1" style="color:var(--primary-2);"></i>
+            <div class="fw-semibold mt-2">Click or drag your resume here</div>
+            <div class="text-muted-custom small">PDF only, up to 5MB</div>
+            <input type="file" id="fileInput" accept="application/pdf" class="d-none" onchange="handleFile(this.files[0])">
+          </div>
+          <div id="fileInfo" class="d-none mt-3 glass-card-strong p-3 d-flex align-items-center gap-3">
+            <i class="bi bi-file-earmark-pdf fs-3 text-danger"></i>
+            <div class="flex-grow-1 overflow-hidden">
+              <div class="fw-semibold text-truncate" id="fileName">resume.pdf</div>
+              <div class="text-muted-custom small" id="fileSize">—</div>
+            </div>
+            <button class="btn btn-sm text-danger" onclick="clearFile()"><i class="bi bi-x-lg"></i></button>
+          </div>
+        </div>
+
+        <div class="glass-card p-4" id="processingCard" style="display:none;">
+          <div class="fw-semibold mb-3">Processing</div>
+          <div class="extract-step" id="step1"><i class="bi bi-circle"></i> Extracting text (PyMuPDF)</div>
+          <div class="extract-step" id="step2"><i class="bi bi-circle"></i> Parsing skills, education & experience</div>
+          <div class="extract-step" id="step3"><i class="bi bi-circle"></i> Generating embeddings (Sentence Transformers)</div>
+          <div class="extract-step" id="step4"><i class="bi bi-circle"></i> Saving vectors to FAISS index</div>
+          <div class="nr-progress mt-3"><div class="bar" id="processBar" style="width:0%;"></div></div>
+        </div>
+      </div>
+
+      <div class="col-lg-7">
+        <div class="glass-card p-4 h-100" id="extractedPanel">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="fw-semibold">Extracted information</div>
+            <span class="pill" id="statusPill"><span class="pill-dot" style="background:var(--text-muted);"></span> Waiting for upload</span>
+          </div>
+          <div id="emptyState" class="text-center py-5 text-muted-custom">
+            <i class="bi bi-file-earmark-text fs-1 mb-2 d-block"></i>
+            Upload a resume to see the parsed details here.
+          </div>
+          <div id="extractedContent" class="d-none">
+            <div class="mb-3">
+              <div class="eyebrow mb-2">Skills</div>
+              <div class="d-flex flex-wrap gap-2" id="extractedSkills"></div>
+            </div>
+            <div class="mb-3">
+              <div class="eyebrow mb-2">Education</div>
+              <div class="text-muted-custom small" id="extractedEducation">—</div>
+            </div>
+            <div class="mb-3">
+              <div class="eyebrow mb-2">Projects</div>
+              <div class="text-muted-custom small" id="extractedProjects">—</div>
+            </div>
+            <div class="mb-3">
+              <div class="eyebrow mb-2">Experience</div>
+              <div class="text-muted-custom small" id="extractedExperience">—</div>
+            </div>
+            <div class="mb-0">
+              <div class="eyebrow mb-2">Certifications</div>
+              <div class="text-muted-custom small" id="extractedCertifications">—</div>
+            </div>
+            <button class="btn-nr-primary btn w-100 mt-4" onclick="window.location.href='interview_setup.html'">
+              Use this resume for my next interview <i class="bi bi-arrow-right ms-1"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/api.js"></script>
+<script src="js/main.js"></script>
+<script>
+requireAuth();
+
+const dz = document.getElementById('dropzone');
+['dragover','dragleave','drop'].forEach(evt=>{
+  dz.addEventListener(evt, (e)=>{
+    e.preventDefault();
+    dz.classList.toggle('dragover', evt==='dragover');
+    if(evt==='drop' && e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
+  });
+});
+
+function renderExtracted(resume){
+  const skillsEl = document.getElementById('extractedSkills');
+  const ex = resume.extracted || { skills:[], education:[], projects:[], experience:[], certifications:[] };
+
+  skillsEl.innerHTML = ex.skills.length
+    ? ex.skills.map(s => `<span class="pill">${s}</span>`).join('')
+    : '<span class="text-muted-custom small">No skills detected — try a more structured resume format.</span>';
+
+  const joinOrDash = (arr) => arr.length ? arr.map(x => `• ${x}`).join('<br>') : '—';
+  document.getElementById('extractedEducation').innerHTML = joinOrDash(ex.education);
+  document.getElementById('extractedProjects').innerHTML = joinOrDash(ex.projects);
+  document.getElementById('extractedExperience').innerHTML = joinOrDash(ex.experience);
+  document.getElementById('extractedCertifications').innerHTML = joinOrDash(ex.certifications);
+
+  document.getElementById('emptyState').classList.add('d-none');
+  document.getElementById('extractedContent').classList.remove('d-none');
+  document.getElementById('statusPill').innerHTML = resume.embedded
+    ? '<span class="pill-dot" style="background:var(--success);"></span> Indexed in FAISS'
+    : '<span class="pill-dot" style="background:var(--warning);"></span> Parsed (embedding pending)';
+}
+
+async function handleFile(file){
+  if(!file) return;
+  if (file.type !== 'application/pdf') {
+    showToast('Only PDF files are accepted.', 'danger');
+    return;
+  }
+
+  document.getElementById('fileInfo').classList.remove('d-none');
+  document.getElementById('fileName').textContent = file.name;
+  document.getElementById('fileSize').textContent = (file.size/1024).toFixed(0) + ' KB';
+  document.getElementById('processingCard').style.display = 'block';
+  document.getElementById('statusPill').innerHTML = '<span class="pill-dot pill-live" style="background:var(--warning);"></span> Processing…';
+
+  const stopStepAnimation = animateSteps();
+
+  try {
+    const resume = await ResumeAPI.upload(file);
+    finishStepAnimation();
+    renderExtracted(resume);
+    showToast('Resume parsed and embeddings saved to FAISS.', 'success');
+  } catch (err) {
+    stopStepAnimation();
+    document.getElementById('processingCard').style.display = 'none';
+    document.getElementById('statusPill').innerHTML = '<span class="pill-dot" style="background:var(--danger);"></span> Upload failed';
+    showToast(err.message, 'danger');
+  }
+}
+
+function clearFile(){
+  document.getElementById('fileInfo').classList.add('d-none');
+  document.getElementById('processingCard').style.display = 'none';
+  document.getElementById('extractedContent').classList.add('d-none');
+  document.getElementById('emptyState').classList.remove('d-none');
+  document.getElementById('fileInput').value = '';
+  document.getElementById('statusPill').innerHTML = '<span class="pill-dot" style="background:var(--text-muted);"></span> Waiting for upload';
+}
+
+// Purely visual step-by-step progress while the real upload/parse/embed
+// request is in flight server-side (the backend does all 4 steps in one call).
+let _stepInterval = null;
+function animateSteps(){
+  const steps = ['step1','step2','step3','step4'];
+  let i = 0;
+  const bar = document.getElementById('processBar');
+  steps.forEach(s => { document.getElementById(s).classList.remove('done'); document.getElementById(s).querySelector('i').className = 'bi bi-circle'; });
+  _stepInterval = setInterval(()=>{
+    if(i > 0) document.getElementById(steps[i-1]).classList.add('done');
+    if(i < steps.length){
+      document.getElementById(steps[i]).querySelector('i').className = 'bi bi-arrow-repeat';
+      bar.style.width = Math.min(90, (i+1)/steps.length*100)+'%'; // cap at 90% until the real response lands
+      i++;
+    } else {
+      clearInterval(_stepInterval);
+    }
+  }, 700);
+  return () => clearInterval(_stepInterval);
+}
+function finishStepAnimation(){
+  clearInterval(_stepInterval);
+  ['step1','step2','step3','step4'].forEach(s=>{
+    document.getElementById(s).classList.add('done');
+    document.getElementById(s).querySelector('i').className = 'bi bi-check-circle-fill';
+  });
+  document.getElementById('processBar').style.width = '100%';
+}
+
+// Load an existing resume (if any) as soon as the page opens.
+(async function loadExistingResume(){
+  try {
+    const resume = await ResumeAPI.active();
+    document.getElementById('fileInfo').classList.remove('d-none');
+    document.getElementById('fileName').textContent = resume.filename;
+    document.getElementById('fileSize').textContent = 'Previously uploaded';
+    renderExtracted(resume);
+  } catch {
+    // No resume uploaded yet — leave the empty state as-is.
+  }
+})();
+</script>
+</body>
+</html>

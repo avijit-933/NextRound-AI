@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interview History — NextRound AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="topbar-mobile">
+  <button class="btn btn-sm text-body" onclick="toggleSidebar()"><i class="bi bi-list fs-3"></i></button>
+  <a class="navbar-brand mb-0" href="index.html" style="font-family:'Space Grotesk';font-weight:700;"><span class="brand-mark">N</span> NextRound</a>
+  <button class="theme-toggle" onclick="toggleTheme()"><i class="bi bi-moon-stars"></i></button>
+</div>
+
+<div class="app-shell">
+  <aside class="app-sidebar" id="sidebar">
+    <div class="sidebar-brand"><span class="brand-mark">N</span> NextRound<span class="text-gradient">AI</span></div>
+    <a href="dashboard.html" class="side-link"><i class="bi bi-grid-1x2-fill"></i> Dashboard</a>
+    <a href="profile.html" class="side-link"><i class="bi bi-person"></i> Profile</a>
+    <a href="resume.html" class="side-link"><i class="bi bi-file-earmark-text"></i> Resume</a>
+    <a href="interview_setup.html" class="side-link"><i class="bi bi-camera-video"></i> New Interview</a>
+    <a href="history.html" class="side-link active"><i class="bi bi-clock-history"></i> History</a>
+    <div class="sidebar-section-label">Account</div>
+    <a href="admin.html" class="side-link"><i class="bi bi-speedometer2"></i> Admin panel</a>
+    <a href="#" class="side-link" onclick="doLogout(event)"><i class="bi bi-box-arrow-right"></i> Log out</a>
+  </aside>
+
+  <main class="app-main">
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+      <h3 class="fw-bold mb-0">Interview history</h3>
+      <a href="interview_setup.html" class="btn-nr-primary btn"><i class="bi bi-plus-lg me-1"></i> New interview</a>
+    </div>
+
+    <div class="glass-card p-3 mb-3 d-flex flex-wrap gap-2">
+      <select class="form-select form-select-nr" style="max-width:180px;" id="filterType" onchange="applyFilters()">
+        <option value="">All types</option>
+        <option>HR</option><option>Technical</option><option>Coding</option><option>Aptitude</option>
+      </select>
+      <select class="form-select form-select-nr" style="max-width:180px;" id="filterRole" onchange="applyFilters()">
+        <option value="">All roles</option>
+      </select>
+      <input type="text" class="form-control form-control-nr flex-grow-1" placeholder="Search..." id="searchBox" oninput="applyFilters()" style="min-width:180px;">
+    </div>
+
+    <div class="glass-card p-3">
+      <div class="table-responsive">
+        <table class="table table-nr mb-0" id="historyTable">
+          <thead><tr><th>Date</th><th>Role</th><th>Type</th><th>Duration</th><th>Score</th><th></th></tr></thead>
+          <tbody id="historyBody">
+            <tr><td colspan="6" class="text-center text-muted-custom py-4">Loading…</td></tr>
+          </tbody>
+        </table>
+        <div class="text-center text-muted-custom py-4 d-none" id="noResults">No interviews match these filters.</div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/api.js"></script>
+<script src="js/main.js"></script>
+<script>
+requireAuth();
+
+function scoreStyle(score){
+  if (score == null) return '';
+  if (score >= 80) return 'color:var(--success);';
+  if (score >= 60) return 'color:var(--warning);';
+  return 'color:var(--danger);';
+}
+function fmtDate(iso){
+  return new Date(iso).toLocaleDateString('en-US', { month:'short', day:'2-digit', year:'numeric' });
+}
+
+async function loadHistory(){
+  const tbody = document.getElementById('historyBody');
+  try {
+    const history = await ReportsAPI.history();
+
+    if (!history.length) {
+      tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted-custom py-4">
+        No interviews yet — <a href="interview_setup.html" style="color:var(--primary-2);">start your first one</a>.
+      </td></tr>`;
+      return;
+    }
+
+    // Populate the role filter with whatever roles actually appear in the data.
+    const roleSelect = document.getElementById('filterRole');
+    [...new Set(history.map(h => h.job_role))].sort().forEach(role => {
+      const opt = document.createElement('option');
+      opt.value = role; opt.textContent = role;
+      roleSelect.appendChild(opt);
+    });
+
+    tbody.innerHTML = history.map(h => `
+      <tr data-type="${h.interview_type}" data-role="${h.job_role}">
+        <td>${fmtDate(h.started_at)}</td>
+        <td>${h.job_role}</td>
+        <td><span class="pill">${h.interview_type}</span></td>
+        <td>${h.duration_minutes} min</td>
+        <td><span class="fw-semibold" style="${scoreStyle(h.overall_score)}">${h.overall_score != null ? Math.round(h.overall_score) : 'Pending'}</span></td>
+        <td class="text-end">
+          <a href="result.html?id=${h.id}" class="btn-nr-ghost btn btn-sm">View</a>
+          <a href="report.html?id=${h.id}" class="btn-nr-ghost btn btn-sm"><i class="bi bi-download"></i></a>
+        </td>
+      </tr>
+    `).join('');
+  } catch (err) {
+    tbody.innerHTML = `<tr><td colspan="6" class="text-center text-danger py-4">${err.message}</td></tr>`;
+  }
+}
+
+function applyFilters(){
+  const type = document.getElementById('filterType').value;
+  const role = document.getElementById('filterRole').value;
+  const q = document.getElementById('searchBox').value.toLowerCase();
+  const rows = document.querySelectorAll('#historyTable tbody tr[data-type]');
+  let visible = 0;
+  rows.forEach(row=>{
+    const matchesType = !type || row.dataset.type === type;
+    const matchesRole = !role || row.dataset.role === role;
+    const matchesSearch = !q || row.textContent.toLowerCase().includes(q);
+    const show = matchesType && matchesRole && matchesSearch;
+    row.style.display = show ? '' : 'none';
+    if(show) visible++;
+  });
+  document.getElementById('noResults').classList.toggle('d-none', visible !== 0 || rows.length === 0);
+}
+
+loadHistory();
+</script>
+</body>
+</html>

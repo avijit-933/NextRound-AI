@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Profile — NextRound AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="topbar-mobile">
+  <button class="btn btn-sm text-body" onclick="toggleSidebar()"><i class="bi bi-list fs-3"></i></button>
+  <a class="navbar-brand mb-0" href="index.html" style="font-family:'Space Grotesk';font-weight:700;"><span class="brand-mark">N</span> NextRound</a>
+  <button class="theme-toggle" onclick="toggleTheme()"><i class="bi bi-moon-stars"></i></button>
+</div>
+
+<div class="app-shell">
+  <aside class="app-sidebar" id="sidebar">
+    <div class="sidebar-brand"><span class="brand-mark">N</span> NextRound<span class="text-gradient">AI</span></div>
+    <a href="dashboard.html" class="side-link"><i class="bi bi-grid-1x2-fill"></i> Dashboard</a>
+    <a href="profile.html" class="side-link active"><i class="bi bi-person"></i> Profile</a>
+    <a href="resume.html" class="side-link"><i class="bi bi-file-earmark-text"></i> Resume</a>
+    <a href="interview_setup.html" class="side-link"><i class="bi bi-camera-video"></i> New Interview</a>
+    <a href="history.html" class="side-link"><i class="bi bi-clock-history"></i> History</a>
+    <div class="sidebar-section-label">Account</div>
+    <a href="admin.html" class="side-link"><i class="bi bi-speedometer2"></i> Admin panel</a>
+    <a href="#" class="side-link" onclick="doLogout(event)"><i class="bi bi-box-arrow-right"></i> Log out</a>
+  </aside>
+
+  <main class="app-main">
+    <h3 class="fw-bold mb-4">Your profile</h3>
+    <div class="row g-4">
+      <div class="col-lg-4">
+        <div class="glass-card p-4 text-center">
+          <div class="rounded-circle mx-auto d-flex align-items-center justify-content-center mb-3" style="width:96px;height:96px;background:var(--grad-main);color:#fff;font-size:2.2rem;font-weight:700;" data-user-initial>A</div>
+          <div class="fw-bold fs-5" data-user-name>Ananya Verma</div>
+          <div class="text-muted-custom small mb-3" data-user-email>ananya.verma@example.com</div>
+          <label class="btn-nr-outline btn btn-sm w-100">
+            <i class="bi bi-upload me-1"></i> Change photo
+            <input type="file" accept="image/jpeg,image/png,image/webp" class="d-none" id="photoInput" onchange="handlePhotoChange(event)">
+          </label>
+          <div class="divider-fade my-4"></div>
+          <div class="d-flex justify-content-between small mb-2"><span class="text-muted-custom">Interviews taken</span><span class="fw-semibold" id="statInterviews">—</span></div>
+          <div class="d-flex justify-content-between small mb-2"><span class="text-muted-custom">Average score</span><span class="fw-semibold" id="statAvg">—</span></div>
+          <div class="d-flex justify-content-between small"><span class="text-muted-custom">Member since</span><span class="fw-semibold" id="statMemberSince">—</span></div>
+        </div>
+      </div>
+      <div class="col-lg-8">
+        <div class="glass-card p-4">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="fw-semibold">Personal details</div>
+            <button class="btn-nr-outline btn btn-sm" id="editBtn" onclick="toggleEdit()"><i class="bi bi-pencil me-1"></i> Edit profile</button>
+          </div>
+          <form id="profileForm" onsubmit="saveProfile(event)">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label-nr">Full name</label>
+                <input type="text" class="form-control form-control-nr" id="fieldFullName" disabled>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label-nr">Email</label>
+                <input type="email" class="form-control form-control-nr" id="fieldEmail" disabled>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label-nr">Phone</label>
+                <input type="tel" class="form-control form-control-nr" id="fieldPhone" disabled>
+              </div>
+              <div class="col-md-6 editable-field">
+                <label class="form-label-nr">College</label>
+                <input type="text" class="form-control form-control-nr" id="fieldCollege" disabled>
+              </div>
+              <div class="col-md-6 editable-field">
+                <label class="form-label-nr">Degree</label>
+                <input type="text" class="form-control form-control-nr" id="fieldDegree" disabled>
+              </div>
+              <div class="col-md-6 editable-field">
+                <label class="form-label-nr">Experience</label>
+                <input type="text" class="form-control form-control-nr" id="fieldExperience" disabled>
+              </div>
+              <div class="col-12 editable-field">
+                <label class="form-label-nr">Skills <span class="text-muted-custom" style="font-weight:400;">(comma-separated)</span></label>
+                <input type="text" class="form-control form-control-nr" id="fieldSkills" disabled>
+              </div>
+            </div>
+            <div class="text-muted-custom small mt-2">Name, email and phone are set at registration and can't be edited here.</div>
+            <div class="mt-4 d-none" id="saveRow">
+              <button class="btn-nr-primary btn" type="submit" id="saveProfileBtn">Save changes</button>
+              <button class="btn-nr-ghost btn" type="button" onclick="toggleEdit()">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/api.js"></script>
+<script src="js/main.js"></script>
+<script>
+requireAuth();
+
+async function handlePhotoChange(e){
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const maxBytes = 2 * 1024 * 1024;
+  if (file.size > maxBytes) {
+    showToast('Image must be under 2MB.', 'danger');
+    e.target.value = '';
+    return;
+  }
+
+  try {
+    const profile = await UsersAPI.uploadProfilePicture(file);
+    // Repaint every avatar on this page (and, once other pages reload,
+    // theirs too — the picture is now saved on the backend, not just here).
+    paintAvatarImage(profile.profile_picture_url);
+    showToast('Profile photo updated.', 'success');
+  } catch (err) {
+    showToast(err.message, 'danger');
+  } finally {
+    e.target.value = ''; // allow re-selecting the same file later
+  }
+}
+
+function toggleEdit(){
+  const inputs = document.querySelectorAll('#profileForm .editable-field input');
+  const editing = inputs[0].disabled;
+  inputs.forEach(i=> i.disabled = !editing);
+  document.getElementById('saveRow').classList.toggle('d-none', !editing);
+  document.getElementById('editBtn').classList.toggle('d-none', editing);
+}
+
+async function saveProfile(e){
+  e.preventDefault();
+  const btn = document.getElementById('saveProfileBtn');
+  const originalHtml = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner-ring"></span> Saving...';
+  try {
+    await UsersAPI.updateProfile({
+      college: document.getElementById('fieldCollege').value.trim() || null,
+      degree: document.getElementById('fieldDegree').value.trim() || null,
+      experience: document.getElementById('fieldExperience').value.trim() || null,
+      skills: document.getElementById('fieldSkills').value.trim() || null,
+    });
+    showToast('Profile updated successfully.', 'success');
+    toggleEdit();
+  } catch (err) {
+    showToast(err.message, 'danger');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = originalHtml;
+  }
+}
+
+async function loadProfile(){
+  try {
+    const [user, profile, history] = await Promise.all([
+      UsersAPI.me(),
+      UsersAPI.getProfile(),
+      ReportsAPI.history().catch(()=>[]),
+    ]);
+
+    document.getElementById('fieldFullName').value = user.full_name;
+    document.getElementById('fieldEmail').value = user.email;
+    document.getElementById('fieldPhone').value = user.phone || '';
+    document.getElementById('fieldCollege').value = profile.college || '';
+    document.getElementById('fieldDegree').value = profile.degree || '';
+    document.getElementById('fieldExperience').value = profile.experience || '';
+    document.getElementById('fieldSkills').value = profile.skills || '';
+
+    document.getElementById('statMemberSince').textContent =
+      new Date(user.created_at).toLocaleDateString('en-US', { month:'short', year:'numeric' });
+
+    const scored = history.filter(h => h.overall_score != null);
+    document.getElementById('statInterviews').textContent = history.length;
+    document.getElementById('statAvg').textContent = scored.length
+      ? Math.round(scored.reduce((a,h)=>a+h.overall_score,0) / scored.length)
+      : '—';
+  } catch (err) {
+    showToast(err.message, 'danger');
+  }
+}
+
+loadProfile();
+</script>
+</body>
+</html>
